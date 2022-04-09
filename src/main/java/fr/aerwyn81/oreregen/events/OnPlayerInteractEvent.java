@@ -4,9 +4,11 @@ import fr.aerwyn81.oreregen.OreRegen;
 import fr.aerwyn81.oreregen.handlers.ConfigHandler;
 import fr.aerwyn81.oreregen.handlers.ItemHandler;
 import fr.aerwyn81.oreregen.handlers.LanguageHandler;
+import fr.aerwyn81.oreregen.handlers.LocationHandler;
 import fr.aerwyn81.oreregen.utils.PlayerUtils;
 import fr.aerwyn81.oreregen.utils.Version;
-import org.bukkit.*;
+import org.bukkit.GameMode;
+import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -19,11 +21,13 @@ public class OnPlayerInteractEvent implements Listener {
     private final ConfigHandler configHandler;
     private final LanguageHandler languageHandler;
     private final ItemHandler itemHandler;
+    private final LocationHandler locationHandler;
 
     public OnPlayerInteractEvent(OreRegen main) {
         this.configHandler = main.getConfigHandler();
         this.languageHandler = main.getLanguageHandler();
         this.itemHandler = main.getItemHandler();
+        this.locationHandler = main.getLocationHandler();
     }
 
     @EventHandler
@@ -36,6 +40,8 @@ public class OnPlayerInteractEvent implements Listener {
         }
 
         Player player = e.getPlayer();
+        Location clickedLocation = block.getLocation();
+
         // Actions to destroy the head only if player has the permission and the creative gamemode
         if (player.getGameMode() == GameMode.CREATIVE && PlayerUtils.hasPermission(player, "oreregen.admin") && hasPluginItemInHand(player)) {
             if (e.getAction() == Action.LEFT_CLICK_BLOCK) {
@@ -50,7 +56,18 @@ public class OnPlayerInteractEvent implements Listener {
                 return;
             }
             else if (e.getAction() == Action.RIGHT_CLICK_BLOCK) {
-                player.sendMessage("Block clicked with item!");
+                if (locationHandler.isExist(clickedLocation)) {
+                    player.sendMessage(languageHandler.getMessage("Messages.BlockAlreadyRegistered"));
+                    return;
+                }
+
+                locationHandler.addLocation(clickedLocation);
+                player.sendMessage(languageHandler.getMessage("Messages.BlockRegistered")
+                        .replaceAll("%x%", String.valueOf(clickedLocation.getBlockX()))
+                        .replaceAll("%y%", String.valueOf(clickedLocation.getBlockY()))
+                        .replaceAll("%z%", String.valueOf(clickedLocation.getBlockZ()))
+                        .replaceAll("%world%", clickedLocation.getWorld().getName()));
+                return;
             }
         }
 
@@ -68,7 +85,6 @@ public class OnPlayerInteractEvent implements Listener {
             return;
         }
 
-        Location clickedLocation = block.getLocation();
         // todo: check if location is correct
 
         player.sendMessage("block destroyed");

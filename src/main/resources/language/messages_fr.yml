@@ -4,6 +4,8 @@ Messages:
   NoPermission: "%prefix% &cVous n'avez pas la permission d'éxécuter cette commande"
   ItemGived: "%prefix% &aVous avez reçu le configurateur"
   NoPermissionBlock: "%prefix% &cVous n'avez pas la permission d'intéragir avec ce bloc"
+  BlockAlreadyRegistered: "%prefix% &cCe bloc est déjà enregistré"
+  BlockRegistered: "%prefix% &aNouveau bloc à regénérer défini &7(%x% %y% %z% %world%)"
 
 Chat:
   Hover:

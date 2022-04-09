@@ -5,6 +5,7 @@ import fr.aerwyn81.oreregen.events.OnPlayerInteractEvent;
 import fr.aerwyn81.oreregen.handlers.ConfigHandler;
 import fr.aerwyn81.oreregen.handlers.ItemHandler;
 import fr.aerwyn81.oreregen.handlers.LanguageHandler;
+import fr.aerwyn81.oreregen.handlers.LocationHandler;
 import fr.aerwyn81.oreregen.utils.ConfigUpdater;
 import fr.aerwyn81.oreregen.utils.FormatUtils;
 import org.bukkit.Bukkit;
@@ -22,6 +23,7 @@ public final class OreRegen extends JavaPlugin {
     private ConfigHandler configHandler;
     private LanguageHandler languageHandler;
     private ItemHandler itemHandler;
+    private LocationHandler locationHandler;
 
     @Override
     public void onEnable() {
@@ -31,7 +33,6 @@ public final class OreRegen extends JavaPlugin {
         log.sendMessage(FormatUtils.translate("&6OreRegen &einitializing..."));
 
         File configFile = new File(getDataFolder(), "config.yml");
-        File locationFile = new File(getDataFolder(), "locations.yml");
 
         saveDefaultConfig();
         try {
@@ -49,6 +50,9 @@ public final class OreRegen extends JavaPlugin {
 
         this.itemHandler = new ItemHandler(this);
         this.itemHandler.loadItem();
+
+        this.locationHandler = new LocationHandler(this);
+        this.locationHandler.loadLocations();
 
         getCommand("oreregen").setExecutor(new ORCommandExecutor(this));
 
@@ -70,5 +74,9 @@ public final class OreRegen extends JavaPlugin {
 
     public ItemHandler getItemHandler() {
         return itemHandler;
+    }
+
+    public LocationHandler getLocationHandler() {
+        return locationHandler;
     }
 }
