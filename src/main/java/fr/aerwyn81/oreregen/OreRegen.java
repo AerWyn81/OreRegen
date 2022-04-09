@@ -6,6 +6,7 @@ import fr.aerwyn81.oreregen.handlers.ConfigHandler;
 import fr.aerwyn81.oreregen.handlers.ItemHandler;
 import fr.aerwyn81.oreregen.handlers.LanguageHandler;
 import fr.aerwyn81.oreregen.handlers.LocationHandler;
+import fr.aerwyn81.oreregen.runnables.OreRegenCheckTask;
 import fr.aerwyn81.oreregen.utils.ConfigUpdater;
 import fr.aerwyn81.oreregen.utils.FormatUtils;
 import org.bukkit.Bukkit;
@@ -24,6 +25,8 @@ public final class OreRegen extends JavaPlugin {
     private LanguageHandler languageHandler;
     private ItemHandler itemHandler;
     private LocationHandler locationHandler;
+
+    private OreRegenCheckTask oreRegenCheckTask;
 
     @Override
     public void onEnable() {
@@ -53,6 +56,9 @@ public final class OreRegen extends JavaPlugin {
 
         this.locationHandler = new LocationHandler(this);
         this.locationHandler.loadLocations();
+
+        this.oreRegenCheckTask = new OreRegenCheckTask(this);
+        oreRegenCheckTask.runTaskTimer(this, 0, (configHandler.getTimerDelay() == 0 ? 1 : configHandler.getTimerDelay()) * 20L);
 
         getCommand("oreregen").setExecutor(new ORCommandExecutor(this));
 

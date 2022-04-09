@@ -1,6 +1,7 @@
 package fr.aerwyn81.oreregen.events;
 
 import fr.aerwyn81.oreregen.OreRegen;
+import fr.aerwyn81.oreregen.data.RegenBlock;
 import fr.aerwyn81.oreregen.handlers.ConfigHandler;
 import fr.aerwyn81.oreregen.handlers.ItemHandler;
 import fr.aerwyn81.oreregen.handlers.LanguageHandler;
@@ -41,27 +42,31 @@ public class OnPlayerInteractEvent implements Listener {
 
         Player player = e.getPlayer();
         Location clickedLocation = block.getLocation();
+        RegenBlock regenBlock = locationHandler.getBlockByLocation(clickedLocation);
 
         // Actions to destroy the head only if player has the permission and the creative gamemode
-        if (player.getGameMode() == GameMode.CREATIVE && PlayerUtils.hasPermission(player, "oreregen.admin") && hasPluginItemInHand(player)) {
-            if (e.getAction() == Action.LEFT_CLICK_BLOCK) {
+        if (player.getGameMode() == GameMode.CREATIVE && PlayerUtils.hasPermission(player, "oreregen.admin")) {
+            if (e.getAction() == Action.LEFT_CLICK_BLOCK && regenBlock != null) {
                 if (!player.isSneaking()) {
                     e.setCancelled(true);
                     player.sendMessage(languageHandler.getMessage("Messages.CreativeSneakRemoveBlock"));
                     return;
                 }
 
-                // Remove the block from the config
-                // ...
+                locationHandler.removeBlock(regenBlock);
+                player.sendMessage(languageHandler.getMessage("Messages.BlockDeleted")
+                        .replaceAll("%x%", String.valueOf(clickedLocation.getBlockX()))
+                        .replaceAll("%y%", String.valueOf(clickedLocation.getBlockY()))
+                        .replaceAll("%z%", String.valueOf(clickedLocation.getBlockZ()))
+                        .replaceAll("%world%", clickedLocation.getWorld().getName()));
                 return;
-            }
-            else if (e.getAction() == Action.RIGHT_CLICK_BLOCK) {
-                if (locationHandler.isExist(clickedLocation)) {
+            } else if (e.getAction() == Action.RIGHT_CLICK_BLOCK && hasPluginItemInHand(player)) {
+                if (regenBlock != null) {
                     player.sendMessage(languageHandler.getMessage("Messages.BlockAlreadyRegistered"));
                     return;
                 }
 
-                locationHandler.addLocation(clickedLocation);
+                locationHandler.addBlock(clickedLocation.getBlock());
                 player.sendMessage(languageHandler.getMessage("Messages.BlockRegistered")
                         .replaceAll("%x%", String.valueOf(clickedLocation.getBlockX()))
                         .replaceAll("%y%", String.valueOf(clickedLocation.getBlockY()))
@@ -85,9 +90,9 @@ public class OnPlayerInteractEvent implements Listener {
             return;
         }
 
-        // todo: check if location is correct
+        e.setCancelled(true);
 
-        player.sendMessage("block destroyed");
+
     }
 
     private boolean isMainHand(PlayerInteractEvent e) {

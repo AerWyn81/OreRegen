@@ -23,9 +23,19 @@ public class ConfigHandler {
         return config.getString("language", "en").toLowerCase();
     }
 
-    public String getItemType() { return config.getString("item.type", "stick"); }
+    public String getItemType() {
+        return config.getString("item.type", "stick");
+    }
 
-    public String getItemName() { return config.getString("item.name", "{#eac086}&lO{#ffe39f}&lre{#eac086}&lR{#ffe39f}&legen"); }
+    public String getItemName() {
+        return config.getString("item.name", "{#eac086}&lO{#ffe39f}&lre{#eac086}&lR{#ffe39f}&legen");
+    }
 
-    public ArrayList<String> getItemLore() { return new ArrayList<>(config.getStringList("item.lore")); }
+    public ArrayList<String> getItemLore() {
+        return new ArrayList<>(config.getStringList("item.lore"));
+    }
+
+    public long getTimerDelay() {
+        return config.getLong("timer.delay", 1);
+    }
 }

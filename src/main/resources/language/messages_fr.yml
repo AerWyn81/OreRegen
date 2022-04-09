@@ -5,7 +5,9 @@ Messages:
   ItemGived: "%prefix% &aVous avez reçu le configurateur"
   NoPermissionBlock: "%prefix% &cVous n'avez pas la permission d'intéragir avec ce bloc"
   BlockAlreadyRegistered: "%prefix% &cCe bloc est déjà enregistré"
-  BlockRegistered: "%prefix% &aNouveau bloc à regénérer défini &7(%x% %y% %z% %world%)"
+  BlockRegistered: "%prefix% &2&l+ &aBloc enregistré &7(%world%, %x%, %y%, %z%)"
+  BlockDeleted: "%prefix% &c&l- &eBloc supprimé &7(%world%, %x%, %y%, %z%)"
+  CreativeSneakRemoveBlock: "%prefix% &cVous devez être accroupi pour supprimer ce bloc"
 
 Chat:
   Hover:

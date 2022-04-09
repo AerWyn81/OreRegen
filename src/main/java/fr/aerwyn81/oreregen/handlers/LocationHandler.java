@@ -1,14 +1,15 @@
 package fr.aerwyn81.oreregen.handlers;
 
 import fr.aerwyn81.oreregen.OreRegen;
+import fr.aerwyn81.oreregen.data.RegenBlock;
 import fr.aerwyn81.oreregen.utils.FormatUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.javatuples.Pair;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,10 +22,10 @@ public class LocationHandler {
     private final File configFile;
     private FileConfiguration config;
 
-    private ArrayList<Pair<UUID, Location>> locations;
+    private ArrayList<RegenBlock> blocks;
 
     public LocationHandler(OreRegen main) {
-        this.locations = new ArrayList<>();
+        this.blocks = new ArrayList<>();
 
         configFile = new File(main.getDataFolder(), "locations.yml");
     }
@@ -40,56 +41,55 @@ public class LocationHandler {
     public void loadLocations() {
         config = YamlConfiguration.loadConfiguration(configFile);
 
-        ConfigurationSection locs = config.getConfigurationSection("locations");
+        ConfigurationSection locs = config.getConfigurationSection("blocks");
 
         if (locs == null) {
-            locations = new ArrayList<>();
+            blocks = new ArrayList<>();
             return;
         }
 
         locs.getKeys(false).forEach(uuid -> {
-            ConfigurationSection configSection = config.getConfigurationSection("locations." + uuid);
+            ConfigurationSection locationSection = config.getConfigurationSection("blocks." + uuid + ".location");
+            String blockType = config.getString("blocks." + uuid + ".blockType", "");
 
-            if (configSection != null) {
-                Map<String, Object> serializedLoc = configSection.getValues(false);
+            if (locationSection != null && !blockType.isEmpty()) {
+                Map<String, Object> serializedLoc = locationSection.getValues(false);
 
                 try {
-                    locations.add(new Pair<>(UUID.fromString(uuid), Location.deserialize(serializedLoc)));
+                    blocks.add(new RegenBlock(UUID.fromString(uuid), Location.deserialize(serializedLoc), Material.valueOf(blockType)));
                 } catch (Exception e) {
-                    OreRegen.log.sendMessage(FormatUtils.translate("&cCannot deserialize location of block " + uuid));
+                    OreRegen.log.sendMessage(FormatUtils.translate("&cCannot deserialize configuration of block " + uuid + ": " + e.getMessage()));
                 }
             }
         });
     }
 
-    public UUID addLocation(Location loc) {
+    public void addBlock(Block block) {
         UUID uniqueUuid = UUID.randomUUID();
         while (getBlockByUUID(uniqueUuid) != null) {
             uniqueUuid = UUID.randomUUID();
         }
 
-        locations.add(new Pair<>(uniqueUuid, loc));
+        blocks.add(new RegenBlock(uniqueUuid, block.getLocation(), block.getType()));
         saveLocations();
-
-        return uniqueUuid;
     }
 
-    public void removeLocation(UUID blockUuid) {
-        Pair<UUID, Location> block = getBlockByUUID(blockUuid);
+    public void removeBlock(RegenBlock block) {
+        block.getLocation().getBlock().setType(Material.AIR);
 
-        if (block != null) {
-            block.getValue1().getBlock().setType(Material.AIR);
-
-            locations.remove(block);
-            saveLocations();
-            saveConfig();
-        }
+        blocks.remove(block);
+        saveLocations();
+        saveConfig();
     }
 
     public void saveLocations() {
-        config.set("locations", new ArrayList<>());
+        config.set("blocks", new ArrayList<>());
 
-        locations.forEach(key -> config.set("locations." + key.getValue0().toString(), key.getValue1().serialize()));
+        blocks.forEach(key -> {
+            String item = "blocks." + key.getIdentifier().toString();
+            config.set(item + ".blockType", key.getMaterial().name());
+            config.set(item + ".location", key.getLocation().serialize());
+        });
         saveConfig();
     }
 
@@ -101,15 +101,15 @@ public class LocationHandler {
         }
     }
 
-    public Pair<UUID, Location> getBlockByUUID(UUID blockUuid) {
-        return locations.stream().filter(p -> p.getValue0().equals(blockUuid)).findFirst().orElse(null);
+    public RegenBlock getBlockByUUID(UUID blockUuid) {
+        return blocks.stream().filter(rB -> rB.getIdentifier().equals(blockUuid)).findFirst().orElse(null);
     }
 
-    public boolean isExist(Location loc) {
-        return locations.stream().anyMatch(l -> areEquals(l.getValue1(), loc));
+    public RegenBlock getBlockByLocation(Location loc) {
+        return blocks.stream().filter(rB -> areEquals(rB.getLocation(), loc)).findFirst().orElse(null);
     }
 
-    public ArrayList<Pair<UUID, Location>> getLocations() {
-        return locations;
+    public ArrayList<RegenBlock> getBlocks() {
+        return blocks;
     }
 }
