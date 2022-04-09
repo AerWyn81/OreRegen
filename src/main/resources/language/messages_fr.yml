@@ -1,0 +1,22 @@
+Prefix: '{#eac086}&lO{#ffe39f}re{#eac086}&lR{#ffe39f}egen &7»&r'
+
+Messages:
+  NoPermission: "%prefix% &cVous n'avez pas la permission d'éxécuter cette commande"
+  ItemGived: "%prefix% &aVous avez reçu le configurateur"
+  NoPermissionBlock: "%prefix% &cVous n'avez pas la permission d'intéragir avec ce bloc"
+
+Chat:
+  Hover:
+    PreviousPage: "&7&oPage précédente"
+    NextPage: "&7&oPage suivante"
+  LineTitle: "&7-------------------[ {#eac086}&lO{#ffe39f}re{#eac086}&lR{#ffe39f}egen&7 ]------------------"
+  PreviousPage: "&7----------[&8<<<&7]---------"
+  NextPage: "&7----------[&8>>>&7]---------"
+  PageFooter: " &8[ &e%pageNumber%&7/&e%totalPage% &8] "
+
+Help:
+  LineTop: "&7--------------------[ &e&lAide &7]--------------------"
+  Help: "&6/or help &8: &7&oAffiche ce message"
+  Give: "&6/or give &8: &7&oDonne un item permettant au joueur de définir le bloc à regénérer"
+  Reload: "&6/or reload &8: &7&oRecharge la configuration"
+  Version: "&6/or version &8: &7&oAffiche la version du plugin"
