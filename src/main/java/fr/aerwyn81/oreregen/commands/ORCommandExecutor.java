@@ -3,6 +3,7 @@ package fr.aerwyn81.oreregen.commands;
 import fr.aerwyn81.oreregen.OreRegen;
 import fr.aerwyn81.oreregen.commands.list.Give;
 import fr.aerwyn81.oreregen.commands.list.Help;
+import fr.aerwyn81.oreregen.commands.list.Reload;
 import fr.aerwyn81.oreregen.commands.list.Version;
 import fr.aerwyn81.oreregen.handlers.LanguageHandler;
 import fr.aerwyn81.oreregen.utils.PlayerUtils;
@@ -10,7 +11,6 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
-import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,6 +31,7 @@ public class ORCommandExecutor implements CommandExecutor, TabCompleter {
         this.register(helpCommand);
         this.register(new Give(main));
         this.register(new Version(main));
+        this.register(new Reload(main));
     }
 
     private void register(Object c) {
@@ -56,11 +57,6 @@ public class ORCommandExecutor implements CommandExecutor, TabCompleter {
 
         if (!PlayerUtils.hasPermission(sender, command.getPermission())) {
             sender.sendMessage(languageHandler.getMessage("Messages.NoPermission"));
-            return false;
-        }
-
-        if (command.isPlayerCommand() && !(sender instanceof Player)) {
-            sender.sendMessage(languageHandler.getMessage("Messages.PlayerOnly"));
             return false;
         }
 

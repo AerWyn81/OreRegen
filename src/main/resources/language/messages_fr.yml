@@ -2,12 +2,16 @@ Prefix: '{#eac086}&lO{#ffe39f}re{#eac086}&lR{#ffe39f}egen &7»&r'
 
 Messages:
   NoPermission: "%prefix% &cVous n'avez pas la permission d'éxécuter cette commande"
+  ErrorCommand: "%prefix% &cErreur dans la commande. Vérifiez avec /or help"
   ItemGived: "%prefix% &aVous avez reçu le configurateur"
+  ReloadComplete: "%prefix% &aLa configuration a été rechargée avec succès"
   NoPermissionBlock: "%prefix% &cVous n'avez pas la permission d'intéragir avec ce bloc"
   BlockAlreadyRegistered: "%prefix% &cCe bloc est déjà enregistré"
   BlockRegistered: "%prefix% &2&l+ &aBloc enregistré &7(%world%, %x%, %y%, %z%)"
   BlockDeleted: "%prefix% &c&l- &eBloc supprimé &7(%world%, %x%, %y%, %z%)"
   CreativeSneakRemoveBlock: "%prefix% &cVous devez être accroupi pour supprimer ce bloc"
+  BlockBreaked: "%prefix% &aBloc miné avec succès"
+  BlockAlreadyBreaked: "%prefix% &cCe bloc a déjà été miné, veuillez attendre %s% seconde(s)"
 
 Chat:
   Hover:

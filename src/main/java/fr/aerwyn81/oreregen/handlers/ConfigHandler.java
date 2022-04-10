@@ -38,4 +38,24 @@ public class ConfigHandler {
     public long getTimerDelay() {
         return config.getLong("timer.delay", 1);
     }
+
+    public boolean getTimerRespawn() {
+        return config.getBoolean("timer.respawn", true);
+    }
+
+    public int getTimerRangeMin() {
+        return config.getInt("timer.range.min", 1);
+    }
+
+    public int getTimerRangeMax() {
+        return config.getInt("timer.range.max", 10);
+    }
+
+    public String getReplacingBlock() {
+        return config.getString("replacingBlock.type", "BEDROCK");
+    }
+
+    public ArrayList<String> getRewardCommands() {
+        return new ArrayList<>(config.getStringList("rewardCommands"));
+    }
 }

@@ -1,6 +1,7 @@
 package fr.aerwyn81.oreregen;
 
 import fr.aerwyn81.oreregen.commands.ORCommandExecutor;
+import fr.aerwyn81.oreregen.data.RegenBlock;
 import fr.aerwyn81.oreregen.events.OnPlayerBreakBlockEvent;
 import fr.aerwyn81.oreregen.events.OnPlayerInteractEvent;
 import fr.aerwyn81.oreregen.handlers.ConfigHandler;
@@ -65,11 +66,17 @@ public final class OreRegen extends JavaPlugin {
 
         Bukkit.getPluginManager().registerEvents(new OnPlayerInteractEvent(this), this);
         Bukkit.getPluginManager().registerEvents(new OnPlayerBreakBlockEvent(this), this);
+
+        log.sendMessage(FormatUtils.translate("&6OreRegen &asuccessfully loaded!"));
     }
 
     @Override
     public void onDisable() {
-        // Plugin shutdown logic
+        Bukkit.getScheduler().cancelTasks(this);
+
+        getLocationHandler().getBlocks().forEach(RegenBlock::resetMinedBlock);
+
+        log.sendMessage(FormatUtils.translate("&6OreRegen &cdisabled!"));
     }
 
     public ConfigHandler getConfigHandler() {
@@ -90,5 +97,9 @@ public final class OreRegen extends JavaPlugin {
 
     public OreRegenCheckTask getOreRegenCheckTask() {
         return oreRegenCheckTask;
+    }
+
+    public void setOreRegenCheckTask(OreRegenCheckTask oreRegenCheckTask) {
+        this.oreRegenCheckTask = oreRegenCheckTask;
     }
 }

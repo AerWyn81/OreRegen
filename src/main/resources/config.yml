@@ -16,10 +16,11 @@ timer:
     enabled: true # to prevent block respawning
     range: # time in seconds
       min: 1
-      max: 10
+      max: 5
 
-block:
-  replacing: STONE
+replacingBlock:
+  type: STONE
 
 # support %player%
-rewards: [ ]
+rewardCommands:
+  - give %player% diamond 1
