@@ -2,7 +2,6 @@ package fr.aerwyn81.oreregen.events;
 
 import fr.aerwyn81.oreregen.OreRegen;
 import fr.aerwyn81.oreregen.data.RegenBlock;
-import fr.aerwyn81.oreregen.handlers.ConfigHandler;
 import fr.aerwyn81.oreregen.handlers.LanguageHandler;
 import fr.aerwyn81.oreregen.handlers.LocationHandler;
 import fr.aerwyn81.oreregen.utils.FormatUtils;
@@ -11,22 +10,24 @@ import fr.aerwyn81.oreregen.utils.PlayerUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.Damageable;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.concurrent.ThreadLocalRandom;
 
 public class OnPlayerBreakBlockEvent implements Listener {
     private final OreRegen main;
-    private final ConfigHandler configHandler;
     private final LanguageHandler languageHandler;
     private final LocationHandler locationHandler;
 
     public OnPlayerBreakBlockEvent(OreRegen main) {
         this.main = main;
-        this.configHandler = main.getConfigHandler();
         this.languageHandler = main.getLanguageHandler();
         this.locationHandler = main.getLocationHandler();
     }
@@ -66,13 +67,34 @@ public class OnPlayerBreakBlockEvent implements Listener {
 
         internalMinedBlock(regenBlock, block);
 
+        ItemStack item = player.getInventory().getItemInMainHand();
+        if (item.getType().toString().toLowerCase().contains("pickaxe")) {
+            Damageable itemDurability = (Damageable) item.getItemMeta();
+            if (itemDurability != null) {
+                if (item.containsEnchantment(Enchantment.DURABILITY)) {
+                    int duraLevel = item.getEnchantmentLevel(Enchantment.DURABILITY);
+                    boolean shouldDamage = ((Math.random()) < (1.0 / (duraLevel + 1)));
+
+                    if (shouldDamage) {
+                        itemDurability.setDamage(itemDurability.getDamage() + 1);
+                        item.setItemMeta((ItemMeta) itemDurability);
+                    }
+                } else {
+                    itemDurability.setDamage(itemDurability.getDamage() + 1);
+                    item.setItemMeta((ItemMeta) itemDurability);
+                }
+            }
+
+            player.updateInventory();
+        }
+
         String message = languageHandler.getMessage("Messages.BlockBreaked");
         if (!message.trim().isEmpty()) {
             player.sendMessage(message);
         }
 
         Bukkit.getScheduler().runTaskLater(main, () -> {
-            configHandler.getRewardCommands().forEach(command ->
+            main.getConfigHandler().getRewardCommands().forEach(command ->
                     main.getServer().dispatchCommand(main.getServer().getConsoleSender(), command
                             .replace("%player%", player.getName())));
         }, 1L);
@@ -81,11 +103,11 @@ public class OnPlayerBreakBlockEvent implements Listener {
     private void internalMinedBlock(RegenBlock regenBlock, Block block) {
         regenBlock.setMined(true);
 
-        int time = ThreadLocalRandom.current().nextInt(configHandler.getTimerRangeMin(), configHandler.getTimerRangeMax() + 1);
+        int time = ThreadLocalRandom.current().nextInt(main.getConfigHandler().getTimerRangeMin(), main.getConfigHandler().getTimerRangeMax() + 1);
         regenBlock.setNextResetTime(time * 1000L);
 
         try {
-            block.setType(Material.valueOf(configHandler.getReplacingBlock()));
+            block.setType(Material.valueOf(main.getConfigHandler().getReplacingBlock()));
         } catch (Exception ex) {
             block.setType(Material.BEDROCK);
             OreRegen.log.sendMessage(FormatUtils.translate("&cError while replacing block: " + ex.getMessage()));

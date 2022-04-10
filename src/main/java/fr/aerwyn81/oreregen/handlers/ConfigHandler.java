@@ -40,15 +40,15 @@ public class ConfigHandler {
     }
 
     public boolean getTimerRespawn() {
-        return config.getBoolean("timer.respawn", true);
+        return config.getBoolean("timer.respawn.enabled", true);
     }
 
     public int getTimerRangeMin() {
-        return config.getInt("timer.range.min", 1);
+        return config.getInt("timer.respawn.range.min", 1);
     }
 
     public int getTimerRangeMax() {
-        return config.getInt("timer.range.max", 10);
+        return config.getInt("timer.respawn.range.max", 10);
     }
 
     public String getReplacingBlock() {
