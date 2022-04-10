@@ -12,6 +12,7 @@ Messages:
   CreativeSneakRemoveBlock: "%prefix% &cVous devez être accroupi pour supprimer ce bloc"
   BlockBreaked: "%prefix% &aBloc miné avec succès"
   BlockAlreadyBreaked: "%prefix% &cCe bloc a déjà été miné, veuillez attendre %s% seconde(s)"
+  Version: "%prefix% &aVersion du plugin : &e%version%"
 
 Chat:
   Hover:
