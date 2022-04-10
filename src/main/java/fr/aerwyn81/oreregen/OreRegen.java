@@ -1,6 +1,7 @@
 package fr.aerwyn81.oreregen;
 
 import fr.aerwyn81.oreregen.commands.ORCommandExecutor;
+import fr.aerwyn81.oreregen.events.OnPlayerBreakBlockEvent;
 import fr.aerwyn81.oreregen.events.OnPlayerInteractEvent;
 import fr.aerwyn81.oreregen.handlers.ConfigHandler;
 import fr.aerwyn81.oreregen.handlers.ItemHandler;
@@ -63,6 +64,7 @@ public final class OreRegen extends JavaPlugin {
         getCommand("oreregen").setExecutor(new ORCommandExecutor(this));
 
         Bukkit.getPluginManager().registerEvents(new OnPlayerInteractEvent(this), this);
+        Bukkit.getPluginManager().registerEvents(new OnPlayerBreakBlockEvent(this), this);
     }
 
     @Override
@@ -84,5 +86,9 @@ public final class OreRegen extends JavaPlugin {
 
     public LocationHandler getLocationHandler() {
         return locationHandler;
+    }
+
+    public OreRegenCheckTask getOreRegenCheckTask() {
+        return oreRegenCheckTask;
     }
 }
