@@ -11,9 +11,9 @@ Messages:
   BlockDeleted: "%prefix% &c&l- &eBloc supprimé &7(%world%, %x%, %y%, %z%)"
   CreativeSneakRemoveBlock: "%prefix% &cVous devez être accroupi pour supprimer ce bloc"
   BlockBreaked: "%prefix% &aBloc miné avec succès"
-  BlockAlreadyBreaked: "%prefix% &cCe bloc a déjà été miné, veuillez attendre %s% seconde(s)"
+  BlockAlreadyBreaked: "%prefix% &cCe bloc a déjà été miné, veuillez attendre %h%h %m%min et %s%sec"
   Version: "%prefix% &aVersion du plugin : &e%version%"
-  InventoryFull: "%prefix% &cIl n'y a pas assez de place dans votre inventaire"
+  InventoryFull: "%prefix% &cIl n'y a pas assez de place dans votre l'inventaire"
 
 Chat:
   Hover:

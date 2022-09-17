@@ -48,7 +48,7 @@ public class ConfigHandler {
     }
 
     public int getTimerRangeMax() {
-        return config.getInt("timer.respawn.range.max", 10);
+        return config.getInt("timer.respawn.range.max", 10) + 1;
     }
 
     public String getReplacingBlock() {

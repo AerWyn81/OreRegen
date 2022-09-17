@@ -1,6 +1,5 @@
 package fr.aerwyn81.oreregen.data;
 
-import fr.aerwyn81.oreregen.utils.MillisecondConverter;
 import org.bukkit.Location;
 import org.bukkit.Material;
 
@@ -12,7 +11,6 @@ public class RegenBlock {
     private final Material material;
 
     private boolean mined;
-    private long lastMinedTime;
     private long nextResetTime;
 
     public RegenBlock(UUID identifier, Location location, Material material) {
@@ -37,9 +35,9 @@ public class RegenBlock {
         return mined;
     }
 
-    public void setMined(boolean mined) {
-        this.mined = mined;
-        lastMinedTime = System.currentTimeMillis();
+    public void setMined(long time) {
+        this.mined = true;
+        this.nextResetTime = System.currentTimeMillis() + time;
     }
 
     public void resetMinedBlock() {
@@ -51,11 +49,7 @@ public class RegenBlock {
         return System.currentTimeMillis() >= nextResetTime;
     }
 
-    public void setNextResetTime(long nextResetTime) {
-        this.nextResetTime = System.currentTimeMillis() + nextResetTime;
-    }
-
-    public MillisecondConverter getTimeLeft() {
-        return new MillisecondConverter(nextResetTime - System.currentTimeMillis());
+    public long getNextResetTime() {
+        return nextResetTime;
     }
 }

@@ -76,7 +76,7 @@ public class OnPlayerBreakBlockEvent implements Listener {
         if (regenBlock.isMined()) {
             String message = languageHandler.getMessage("Messages.BlockAlreadyBreaked");
             if (!message.trim().isEmpty()) {
-                MillisecondConverter converter = regenBlock.getTimeLeft();
+                MillisecondConverter converter = new MillisecondConverter(regenBlock.getNextResetTime() - System.currentTimeMillis());
                 player.sendMessage(message.replaceAll("%h%", String.valueOf(converter.getHours()))
                         .replaceAll("%m%", String.valueOf(converter.getMinutes()))
                         .replaceAll("%s%", String.valueOf(converter.getSeconds()))
@@ -122,10 +122,8 @@ public class OnPlayerBreakBlockEvent implements Listener {
     }
 
     private void internalMinedBlock(RegenBlock regenBlock, Block block) {
-        regenBlock.setMined(true);
-
-        int time = ThreadLocalRandom.current().nextInt(main.getConfigHandler().getTimerRangeMin(), main.getConfigHandler().getTimerRangeMax() + 1);
-        regenBlock.setNextResetTime(time * 1000L);
+        long time = getRandomTimeInRange(main.getConfigHandler().getTimerRangeMin(), main.getConfigHandler().getTimerRangeMax());
+        regenBlock.setMined(time);
 
         try {
             block.setType(Material.valueOf(main.getConfigHandler().getReplacingBlock()));
@@ -133,5 +131,9 @@ public class OnPlayerBreakBlockEvent implements Listener {
             block.setType(Material.BEDROCK);
             OreRegen.log.sendMessage(FormatUtils.translate("&cError while replacing block: " + ex.getMessage()));
         }
+    }
+
+    private long getRandomTimeInRange(int rMin, int rMax) {
+        return ThreadLocalRandom.current().nextInt(rMin, rMax) * 1000L;
     }
 }

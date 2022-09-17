@@ -2,11 +2,11 @@ package fr.aerwyn81.oreregen.utils;
 
 public class MillisecondConverter {
 
-    private long milliseconds;
-    private long seconds;
-    private long minutes;
-    private long hours;
-    private long days;
+    private final long milliseconds;
+    private final long seconds;
+    private final long minutes;
+    private final long hours;
+    private final long days;
 
     public MillisecondConverter(long millis) {
         this.milliseconds = millis;
@@ -20,39 +20,19 @@ public class MillisecondConverter {
         return milliseconds % 1000;
     }
 
-    public void setMilliseconds(long milliseconds) {
-        this.milliseconds = milliseconds;
-    }
-
     public long getSeconds() {
         return seconds % 60;
-    }
-
-    public void setSeconds(long seconds) {
-        this.seconds = seconds;
     }
 
     public long getMinutes() {
         return minutes % 60;
     }
 
-    public void setMinutes(long minutes) {
-        this.minutes = minutes;
-    }
-
     public long getHours() {
         return hours % 24;
     }
 
-    public void setHours(long hours) {
-        this.hours = hours;
-    }
-
     public long getDays() {
         return days;
-    }
-
-    public void setDays(long days) {
-        this.days = days;
     }
 }
