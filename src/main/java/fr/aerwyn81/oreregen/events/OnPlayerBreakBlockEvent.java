@@ -56,7 +56,7 @@ public class OnPlayerBreakBlockEvent implements Listener {
 
         e.setCancelled(true);
 
-        if (player.getGameMode() == GameMode.CREATIVE) {
+        if (player.getGameMode() == GameMode.CREATIVE && player.getInventory().getItemInMainHand().getType() == Material.AIR) {
             if (!player.isSneaking()) {
                 e.setCancelled(true);
                 player.sendMessage(languageHandler.getMessage("Messages.CreativeSneakRemoveBlock"));
@@ -89,7 +89,7 @@ public class OnPlayerBreakBlockEvent implements Listener {
         internalMinedBlock(regenBlock, block);
 
         ItemStack item = player.getInventory().getItemInMainHand();
-        if (item.getType().toString().toLowerCase().contains("pickaxe")) {
+        if (item.getType().toString().toLowerCase().contains("pickaxe") && player.getGameMode() == GameMode.SURVIVAL) {
             Damageable itemDurability = (Damageable) item.getItemMeta();
             if (itemDurability != null) {
                 if (item.containsEnchantment(Enchantment.DURABILITY)) {
