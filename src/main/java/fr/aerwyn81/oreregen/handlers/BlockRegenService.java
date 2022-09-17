@@ -6,30 +6,45 @@ import fr.aerwyn81.oreregen.utils.FormatUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
+import xyz.xenondevs.particle.ParticleBuilder;
+import xyz.xenondevs.particle.ParticleEffect;
+import xyz.xenondevs.particle.task.TaskManager;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.logging.Level;
 
-public class LocationService {
+public class BlockRegenService {
     private static File configFile;
     private static FileConfiguration config;
 
     private static ArrayList<RegenBlock> blocks;
+    private static HashMap<UUID, ArrayList<Integer>> particlesCache;
 
     public static void initialize() {
         configFile = new File(OreRegen.getInstance().getDataFolder(), "locations.yml");
     }
 
-    public static void loadLocations() {
-        blocks = new ArrayList<>();
+    public static void loadBlocks() {
+        if (blocks != null) {
+            blocks.clear();
+        } else {
+            blocks = new ArrayList<>();
+        }
+
+        if (particlesCache != null) {
+            particlesCache.clear();
+        } else {
+            particlesCache = new HashMap<>();
+        }
 
         config = YamlConfiguration.loadConfiguration(configFile);
 
@@ -109,5 +124,43 @@ public class LocationService {
                 && loc1.getBlockZ() == loc2.getBlockZ()
                 && loc1.getWorld() != null && loc2.getWorld() != null &&
                 loc1.getWorld().getName().equals(loc2.getWorld().getName());
+    }
+
+    public static void showParticlesOnBlocks(Player player) {
+        if (blocks.size() != 0) {
+            if (!particlesCache.containsKey(player.getUniqueId())) {
+                particlesCache.put(player.getUniqueId(), new ArrayList<>());
+            }
+
+            for (RegenBlock block : blocks) {
+                Location locMax = block.getLocation().clone().add(1, 1, 1);
+
+                Integer pTask = startCubeTask(block.getLocation().getWorld(), block.getLocation().toVector(), locMax.toVector(), player);
+                particlesCache.get(player.getUniqueId()).add(pTask);
+            }
+        }
+    }
+
+
+    private static Integer startCubeTask(World world, Vector start, Vector end, Player player) {
+        List<Object> packets = new ArrayList<>();
+        ParticleBuilder particle = new ParticleBuilder(ParticleEffect.FLAME);
+
+        for (int x = start.getBlockX(); x <= end.getBlockX(); ++x) {
+            for (int y = start.getBlockY(); y <= end.getBlockY(); ++y) {
+                for (int z = start.getBlockZ(); z <= end.getBlockZ(); ++z) {
+                    packets.add(particle.setLocation(new Location(world, x, y, z)).toPacket());
+                }
+            }
+        }
+
+        return TaskManager.startSingularTask(packets, 10, player);
+    }
+
+    public static void removeBlockParticlesCache(Player player) {
+        if (particlesCache.containsKey(player.getUniqueId())) {
+            particlesCache.get(player.getUniqueId()).forEach(tId -> TaskManager.getTaskManager().stopTask(tId));
+            particlesCache.remove(player.getUniqueId());
+        }
     }
 }

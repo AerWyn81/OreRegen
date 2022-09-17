@@ -1,9 +1,9 @@
 package fr.aerwyn81.oreregen.events;
 
 import fr.aerwyn81.oreregen.data.RegenBlock;
+import fr.aerwyn81.oreregen.handlers.BlockRegenService;
 import fr.aerwyn81.oreregen.handlers.ItemService;
 import fr.aerwyn81.oreregen.handlers.LanguageService;
-import fr.aerwyn81.oreregen.handlers.LocationService;
 import fr.aerwyn81.oreregen.utils.PlayerUtils;
 import fr.aerwyn81.oreregen.utils.Version;
 import org.bukkit.GameMode;
@@ -37,7 +37,7 @@ public class OnPlayerInteractEvent implements Listener {
         }
 
         Location clickedLocation = block.getLocation();
-        RegenBlock regenBlock = LocationService.getBlockByLocation(clickedLocation);
+        RegenBlock regenBlock = BlockRegenService.getBlockByLocation(clickedLocation);
 
         if (e.getAction() == Action.RIGHT_CLICK_BLOCK) {
             if (!hasPluginItemInHand(player)) {
@@ -49,7 +49,9 @@ public class OnPlayerInteractEvent implements Listener {
                 return;
             }
 
-            LocationService.addBlock(clickedLocation.getBlock());
+            BlockRegenService.addBlock(clickedLocation.getBlock());
+            BlockRegenService.showParticlesOnBlocks(player);
+
             player.sendMessage(LanguageService.getMessage("Messages.BlockRegistered")
                     .replaceAll("%x%", String.valueOf(clickedLocation.getBlockX()))
                     .replaceAll("%y%", String.valueOf(clickedLocation.getBlockY()))

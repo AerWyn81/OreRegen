@@ -2,9 +2,9 @@ package fr.aerwyn81.oreregen.events;
 
 import fr.aerwyn81.oreregen.OreRegen;
 import fr.aerwyn81.oreregen.data.RegenBlock;
+import fr.aerwyn81.oreregen.handlers.BlockRegenService;
 import fr.aerwyn81.oreregen.handlers.ConfigService;
 import fr.aerwyn81.oreregen.handlers.LanguageService;
-import fr.aerwyn81.oreregen.handlers.LocationService;
 import fr.aerwyn81.oreregen.utils.FormatUtils;
 import fr.aerwyn81.oreregen.utils.MillisecondConverter;
 import fr.aerwyn81.oreregen.utils.PlayerUtils;
@@ -33,7 +33,7 @@ public class OnPlayerBreakBlockEvent implements Listener {
         Block block = e.getBlock();
         Location blockLocation = block.getLocation();
 
-        RegenBlock regenBlock = LocationService.getBlockByLocation(blockLocation);
+        RegenBlock regenBlock = BlockRegenService.getBlockByLocation(blockLocation);
         if (regenBlock == null)
             return;
 
@@ -55,7 +55,7 @@ public class OnPlayerBreakBlockEvent implements Listener {
                 return;
             }
 
-            LocationService.removeBlock(regenBlock);
+            BlockRegenService.removeBlock(regenBlock);
             player.sendMessage(LanguageService.getMessage("Messages.BlockDeleted")
                     .replaceAll("%x%", String.valueOf(blockLocation.getBlockX()))
                     .replaceAll("%y%", String.valueOf(blockLocation.getBlockY()))

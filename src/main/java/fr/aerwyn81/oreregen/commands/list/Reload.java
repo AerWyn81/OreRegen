@@ -4,10 +4,10 @@ import fr.aerwyn81.oreregen.OreRegen;
 import fr.aerwyn81.oreregen.commands.Cmd;
 import fr.aerwyn81.oreregen.commands.ORAnnotations;
 import fr.aerwyn81.oreregen.data.RegenBlock;
+import fr.aerwyn81.oreregen.handlers.BlockRegenService;
 import fr.aerwyn81.oreregen.handlers.ConfigService;
 import fr.aerwyn81.oreregen.handlers.ItemService;
 import fr.aerwyn81.oreregen.handlers.LanguageService;
-import fr.aerwyn81.oreregen.handlers.LocationService;
 import fr.aerwyn81.oreregen.runnables.OreRegenCheckTask;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -29,8 +29,8 @@ public class Reload implements Cmd {
 
         ItemService.loadItem();
 
-        LocationService.getBlocks().forEach(RegenBlock::resetMinedBlock);
-        LocationService.loadLocations();
+        BlockRegenService.getBlocks().forEach(RegenBlock::resetMinedBlock);
+        BlockRegenService.loadBlocks();
 
         Bukkit.getScheduler().cancelTasks(plugin);
         plugin.setOreRegenCheckTask(new OreRegenCheckTask());

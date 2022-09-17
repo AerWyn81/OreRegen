@@ -3,11 +3,12 @@ package fr.aerwyn81.oreregen;
 import fr.aerwyn81.oreregen.commands.ORCommandExecutor;
 import fr.aerwyn81.oreregen.data.RegenBlock;
 import fr.aerwyn81.oreregen.events.OnPlayerBreakBlockEvent;
+import fr.aerwyn81.oreregen.events.OnPlayerHelEvent;
 import fr.aerwyn81.oreregen.events.OnPlayerInteractEvent;
+import fr.aerwyn81.oreregen.handlers.BlockRegenService;
 import fr.aerwyn81.oreregen.handlers.ConfigService;
 import fr.aerwyn81.oreregen.handlers.ItemService;
 import fr.aerwyn81.oreregen.handlers.LanguageService;
-import fr.aerwyn81.oreregen.handlers.LocationService;
 import fr.aerwyn81.oreregen.runnables.OreRegenCheckTask;
 import fr.aerwyn81.oreregen.utils.ConfigUpdater;
 import fr.aerwyn81.oreregen.utils.FormatUtils;
@@ -53,8 +54,8 @@ public final class OreRegen extends JavaPlugin {
 
         ItemService.loadItem();
 
-        LocationService.initialize();
-        LocationService.loadLocations();
+        BlockRegenService.initialize();
+        BlockRegenService.loadBlocks();
 
         this.oreRegenCheckTask = new OreRegenCheckTask();
         oreRegenCheckTask.runTaskTimer(this, 0, (ConfigService.getTimerDelay() == 0 ? 1 : ConfigService.getTimerDelay()) * 20L);
@@ -63,6 +64,7 @@ public final class OreRegen extends JavaPlugin {
 
         Bukkit.getPluginManager().registerEvents(new OnPlayerInteractEvent(), this);
         Bukkit.getPluginManager().registerEvents(new OnPlayerBreakBlockEvent(), this);
+        Bukkit.getPluginManager().registerEvents(new OnPlayerHelEvent(), this);
 
         log.sendMessage(FormatUtils.translate("&6OreRegen &asuccessfully loaded!"));
     }
@@ -71,7 +73,7 @@ public final class OreRegen extends JavaPlugin {
     public void onDisable() {
         Bukkit.getScheduler().cancelTasks(this);
 
-        LocationService.getBlocks().forEach(RegenBlock::resetMinedBlock);
+        BlockRegenService.getBlocks().forEach(RegenBlock::resetMinedBlock);
 
         log.sendMessage(FormatUtils.translate("&6OreRegen &cdisabled!"));
     }
