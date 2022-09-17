@@ -8,6 +8,8 @@ import fr.aerwyn81.oreregen.utils.FormatUtils;
 import fr.aerwyn81.oreregen.utils.MillisecondConverter;
 import fr.aerwyn81.oreregen.utils.PlayerUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.enchantments.Enchantment;
@@ -37,7 +39,9 @@ public class OnPlayerBreakBlockEvent implements Listener {
         Player player = e.getPlayer();
 
         Block block = e.getBlock();
-        RegenBlock regenBlock = locationHandler.getBlockByLocation(block.getLocation());
+        Location blockLocation = block.getLocation();
+
+        RegenBlock regenBlock = locationHandler.getBlockByLocation(blockLocation);
         if (regenBlock == null)
             return;
 
@@ -51,6 +55,23 @@ public class OnPlayerBreakBlockEvent implements Listener {
         }
 
         e.setCancelled(true);
+
+        if (player.getGameMode() == GameMode.CREATIVE) {
+            if (!player.isSneaking()) {
+                e.setCancelled(true);
+                player.sendMessage(languageHandler.getMessage("Messages.CreativeSneakRemoveBlock"));
+                return;
+            }
+
+            locationHandler.removeBlock(regenBlock);
+            player.sendMessage(languageHandler.getMessage("Messages.BlockDeleted")
+                    .replaceAll("%x%", String.valueOf(blockLocation.getBlockX()))
+                    .replaceAll("%y%", String.valueOf(blockLocation.getBlockY()))
+                    .replaceAll("%z%", String.valueOf(blockLocation.getBlockZ()))
+                    .replaceAll("%world%", blockLocation.getWorld().getName()));
+
+            return;
+        }
 
         if (regenBlock.isMined()) {
             String message = languageHandler.getMessage("Messages.BlockAlreadyBreaked");

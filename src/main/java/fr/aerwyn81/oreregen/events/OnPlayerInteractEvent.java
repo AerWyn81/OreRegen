@@ -37,33 +37,17 @@ public class OnPlayerInteractEvent implements Listener {
         }
 
         Player player = e.getPlayer();
+
+        if (player.getGameMode() == GameMode.CREATIVE && e.getAction() == Action.LEFT_CLICK_BLOCK) {
+            return;
+        }
+
+        if (!PlayerUtils.hasPermission(player, "oreregen.admin")) {
+            return;
+        }
+
         Location clickedLocation = block.getLocation();
-
-        if (player.getGameMode() != GameMode.CREATIVE || !PlayerUtils.hasPermission(player, "oreregen.admin")) {
-            return;
-        }
-
         RegenBlock regenBlock = locationHandler.getBlockByLocation(clickedLocation);
-        if (e.getAction() == Action.LEFT_CLICK_BLOCK) {
-            if (regenBlock == null) {
-                return;
-            }
-
-            if (!player.isSneaking()) {
-                e.setCancelled(true);
-                player.sendMessage(languageHandler.getMessage("Messages.CreativeSneakRemoveBlock"));
-                return;
-            }
-
-            locationHandler.removeBlock(regenBlock);
-            player.sendMessage(languageHandler.getMessage("Messages.BlockDeleted")
-                    .replaceAll("%x%", String.valueOf(clickedLocation.getBlockX()))
-                    .replaceAll("%y%", String.valueOf(clickedLocation.getBlockY()))
-                    .replaceAll("%z%", String.valueOf(clickedLocation.getBlockZ()))
-                    .replaceAll("%world%", clickedLocation.getWorld().getName()));
-
-            return;
-        }
 
         if (e.getAction() == Action.RIGHT_CLICK_BLOCK) {
             if (!hasPluginItemInHand(player)) {

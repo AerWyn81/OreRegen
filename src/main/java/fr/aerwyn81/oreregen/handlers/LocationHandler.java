@@ -75,8 +75,6 @@ public class LocationHandler {
     }
 
     public void removeBlock(RegenBlock block) {
-        block.getLocation().getBlock().setType(Material.AIR);
-
         blocks.remove(block);
         saveLocations();
         saveConfig();
