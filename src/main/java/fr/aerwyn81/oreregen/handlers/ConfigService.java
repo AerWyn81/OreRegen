@@ -6,56 +6,56 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import java.io.File;
 import java.util.ArrayList;
 
-public class ConfigHandler {
+public class ConfigService {
+    private static File configFile;
+    private static FileConfiguration config;
 
-    private final File configFile;
-    private FileConfiguration config;
-
-    public ConfigHandler(File configFile) {
-        this.configFile = configFile;
+    public static void initialize(File file) {
+        configFile = file;
+        load();
     }
 
-    public void loadConfiguration() {
-        this.config = YamlConfiguration.loadConfiguration(configFile);
+    public static void load() {
+        config = YamlConfiguration.loadConfiguration(configFile);
     }
 
-    public String getLanguage() {
+    public static String getLanguage() {
         return config.getString("language", "en").toLowerCase();
     }
 
-    public String getItemType() {
+    public static String getItemType() {
         return config.getString("item.type", "stick");
     }
 
-    public String getItemName() {
+    public static String getItemName() {
         return config.getString("item.name", "{#eac086}&lO{#ffe39f}&lre{#eac086}&lR{#ffe39f}&legen");
     }
 
-    public ArrayList<String> getItemLore() {
+    public static ArrayList<String> getItemLore() {
         return new ArrayList<>(config.getStringList("item.lore"));
     }
 
-    public long getTimerDelay() {
+    public static long getTimerDelay() {
         return config.getLong("timer.delay", 1);
     }
 
-    public boolean getTimerRespawn() {
+    public static boolean getTimerRespawn() {
         return config.getBoolean("timer.respawn.enabled", true);
     }
 
-    public int getTimerRangeMin() {
+    public static int getTimerRangeMin() {
         return config.getInt("timer.respawn.range.min", 1);
     }
 
-    public int getTimerRangeMax() {
+    public static int getTimerRangeMax() {
         return config.getInt("timer.respawn.range.max", 10) + 1;
     }
 
-    public String getReplacingBlock() {
+    public static String getReplacingBlock() {
         return config.getString("replacingBlock.type", "BEDROCK");
     }
 
-    public ArrayList<String> getRewardCommands() {
+    public static ArrayList<String> getRewardCommands() {
         return new ArrayList<>(config.getStringList("rewardCommands"));
     }
 }

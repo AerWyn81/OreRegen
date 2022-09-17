@@ -5,7 +5,7 @@ import fr.aerwyn81.oreregen.commands.list.Give;
 import fr.aerwyn81.oreregen.commands.list.Help;
 import fr.aerwyn81.oreregen.commands.list.Reload;
 import fr.aerwyn81.oreregen.commands.list.Version;
-import fr.aerwyn81.oreregen.handlers.LanguageHandler;
+import fr.aerwyn81.oreregen.handlers.LanguageService;
 import fr.aerwyn81.oreregen.utils.PlayerUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -19,19 +19,17 @@ import java.util.stream.Collectors;
 
 public class ORCommandExecutor implements CommandExecutor, TabCompleter {
     private final HashMap<String, ORCommand> registeredCommands;
-    private final LanguageHandler languageHandler;
     private final Help helpCommand;
 
     public ORCommandExecutor(OreRegen main) {
-        this.languageHandler = main.getLanguageHandler();
         this.registeredCommands = new HashMap<>();
 
-        this.helpCommand = new Help(main);
+        this.helpCommand = new Help();
 
         this.register(helpCommand);
-        this.register(new Give(main));
-        this.register(new Version(main));
-        this.register(new Reload(main));
+        this.register(new Give());
+        this.register(new Version());
+        this.register(new Reload());
     }
 
     private void register(Object c) {
@@ -44,26 +42,26 @@ public class ORCommandExecutor implements CommandExecutor, TabCompleter {
     @Override
     public boolean onCommand(CommandSender sender, Command c, String s, String[] args) {
         if (args.length <= 0) {
-            sender.sendMessage(languageHandler.getMessage("Messages.ErrorCommand"));
+            sender.sendMessage(LanguageService.getMessage("Messages.ErrorCommand"));
             return false;
         }
 
         ORCommand command = registeredCommands.get(args[0].toLowerCase());
 
         if (command == null) {
-            sender.sendMessage(languageHandler.getMessage("Messages.ErrorCommand"));
+            sender.sendMessage(LanguageService.getMessage("Messages.ErrorCommand"));
             return false;
         }
 
         if (!PlayerUtils.hasPermission(sender, command.getPermission())) {
-            sender.sendMessage(languageHandler.getMessage("Messages.NoPermission"));
+            sender.sendMessage(LanguageService.getMessage("Messages.NoPermission"));
             return false;
         }
 
         String[] argsWithoutCmd = Arrays.copyOfRange(args, 1, args.length);
 
         if (argsWithoutCmd.length < command.getArgs().length) {
-            sender.sendMessage(languageHandler.getMessage("Messages.ErrorCommand"));
+            sender.sendMessage(LanguageService.getMessage("Messages.ErrorCommand"));
             return false;
         }
 

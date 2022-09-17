@@ -10,18 +10,12 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 
-public class ItemHandler {
-    private final ConfigHandler configHandler;
+public class ItemService {
+    private static ItemStack item;
 
-    private ItemStack item;
-
-    public ItemHandler(OreRegen main) {
-        this.configHandler = main.getConfigHandler();
-    }
-
-    public void loadItem() {
+    public static void loadItem() {
         try {
-            item = setItem(Material.valueOf(configHandler.getItemType()), FormatUtils.translate(configHandler.getItemName()), FormatUtils.translate(configHandler.getItemLore()));
+            item = setItem(Material.valueOf(ConfigService.getItemType()), FormatUtils.translate(ConfigService.getItemName()), FormatUtils.translate(ConfigService.getItemLore()));
         } catch (Exception ex) {
             item = setItem(Material.STICK, FormatUtils.translate("{#eac086}&lO{#ffe39f}re{#eac086}&lR{#ffe39f}egen"), new ArrayList<>());
             OreRegen.log.sendMessage(FormatUtils.translate("&cError while configuring item: " + ex.getMessage()));
@@ -46,7 +40,7 @@ public class ItemHandler {
         return item;
     }
 
-    public ItemStack getItem() {
+    public static ItemStack getItem() {
         return item;
     }
 }

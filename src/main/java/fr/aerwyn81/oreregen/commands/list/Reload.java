@@ -4,8 +4,10 @@ import fr.aerwyn81.oreregen.OreRegen;
 import fr.aerwyn81.oreregen.commands.Cmd;
 import fr.aerwyn81.oreregen.commands.ORAnnotations;
 import fr.aerwyn81.oreregen.data.RegenBlock;
-import fr.aerwyn81.oreregen.handlers.ConfigHandler;
-import fr.aerwyn81.oreregen.handlers.LanguageHandler;
+import fr.aerwyn81.oreregen.handlers.ConfigService;
+import fr.aerwyn81.oreregen.handlers.ItemService;
+import fr.aerwyn81.oreregen.handlers.LanguageService;
+import fr.aerwyn81.oreregen.handlers.LocationService;
 import fr.aerwyn81.oreregen.runnables.OreRegenCheckTask;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -14,34 +16,27 @@ import java.util.ArrayList;
 
 @ORAnnotations(command = "reload", permission = "headblocks.admin")
 public class Reload implements Cmd {
-    private final OreRegen main;
-    private final ConfigHandler configHandler;
-    private final LanguageHandler languageHandler;
-
-    public Reload(OreRegen main) {
-        this.main = main;
-        this.configHandler = main.getConfigHandler();
-        this.languageHandler = main.getLanguageHandler();
-    }
 
     @Override
     public boolean perform(CommandSender sender, String[] args) {
-        main.reloadConfig();
-        main.getConfigHandler().loadConfiguration();
+        OreRegen plugin = OreRegen.getInstance();
 
-        main.getLanguageHandler().setLanguage(main.getConfigHandler().getLanguage());
-        main.getLanguageHandler().pushMessages();
+        plugin.reloadConfig();
+        ConfigService.load();
 
-        main.getItemHandler().loadItem();
+        LanguageService.setLanguage(ConfigService.getLanguage());
+        LanguageService.pushMessages();
 
-        main.getLocationHandler().getBlocks().forEach(RegenBlock::resetMinedBlock);
-        main.getLocationHandler().loadLocations();
+        ItemService.loadItem();
 
-        Bukkit.getScheduler().cancelTasks(main);
-        main.setOreRegenCheckTask(new OreRegenCheckTask(main));
-        main.getOreRegenCheckTask().runTaskTimer(main, 0, configHandler.getTimerDelay());
+        LocationService.getBlocks().forEach(RegenBlock::resetMinedBlock);
+        LocationService.loadLocations();
 
-        sender.sendMessage(languageHandler.getMessage("Messages.ReloadComplete"));
+        Bukkit.getScheduler().cancelTasks(plugin);
+        plugin.setOreRegenCheckTask(new OreRegenCheckTask());
+        plugin.getOreRegenCheckTask().runTaskTimer(plugin, 0, ConfigService.getTimerDelay());
+
+        sender.sendMessage(LanguageService.getMessage("Messages.ReloadComplete"));
         return true;
     }
 

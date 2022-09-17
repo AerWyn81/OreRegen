@@ -1,10 +1,9 @@
 package fr.aerwyn81.oreregen.events;
 
-import fr.aerwyn81.oreregen.OreRegen;
 import fr.aerwyn81.oreregen.data.RegenBlock;
-import fr.aerwyn81.oreregen.handlers.ItemHandler;
-import fr.aerwyn81.oreregen.handlers.LanguageHandler;
-import fr.aerwyn81.oreregen.handlers.LocationHandler;
+import fr.aerwyn81.oreregen.handlers.ItemService;
+import fr.aerwyn81.oreregen.handlers.LanguageService;
+import fr.aerwyn81.oreregen.handlers.LocationService;
 import fr.aerwyn81.oreregen.utils.PlayerUtils;
 import fr.aerwyn81.oreregen.utils.Version;
 import org.bukkit.GameMode;
@@ -18,15 +17,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 
 public class OnPlayerInteractEvent implements Listener {
-    private final LanguageHandler languageHandler;
-    private final ItemHandler itemHandler;
-    private final LocationHandler locationHandler;
-
-    public OnPlayerInteractEvent(OreRegen main) {
-        this.languageHandler = main.getLanguageHandler();
-        this.itemHandler = main.getItemHandler();
-        this.locationHandler = main.getLocationHandler();
-    }
 
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent e) {
@@ -47,7 +37,7 @@ public class OnPlayerInteractEvent implements Listener {
         }
 
         Location clickedLocation = block.getLocation();
-        RegenBlock regenBlock = locationHandler.getBlockByLocation(clickedLocation);
+        RegenBlock regenBlock = LocationService.getBlockByLocation(clickedLocation);
 
         if (e.getAction() == Action.RIGHT_CLICK_BLOCK) {
             if (!hasPluginItemInHand(player)) {
@@ -55,12 +45,12 @@ public class OnPlayerInteractEvent implements Listener {
             }
 
             if (regenBlock != null) {
-                player.sendMessage(languageHandler.getMessage("Messages.BlockAlreadyRegistered"));
+                player.sendMessage(LanguageService.getMessage("Messages.BlockAlreadyRegistered"));
                 return;
             }
 
-            locationHandler.addBlock(clickedLocation.getBlock());
-            player.sendMessage(languageHandler.getMessage("Messages.BlockRegistered")
+            LocationService.addBlock(clickedLocation.getBlock());
+            player.sendMessage(LanguageService.getMessage("Messages.BlockRegistered")
                     .replaceAll("%x%", String.valueOf(clickedLocation.getBlockX()))
                     .replaceAll("%y%", String.valueOf(clickedLocation.getBlockY()))
                     .replaceAll("%z%", String.valueOf(clickedLocation.getBlockZ()))
@@ -77,6 +67,6 @@ public class OnPlayerInteractEvent implements Listener {
     }
 
     private boolean hasPluginItemInHand(Player player) {
-        return player.getInventory().getItemInMainHand().isSimilar(itemHandler.getItem());
+        return player.getInventory().getItemInMainHand().isSimilar(ItemService.getItem());
     }
 }

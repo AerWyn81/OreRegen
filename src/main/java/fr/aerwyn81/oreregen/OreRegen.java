@@ -4,10 +4,10 @@ import fr.aerwyn81.oreregen.commands.ORCommandExecutor;
 import fr.aerwyn81.oreregen.data.RegenBlock;
 import fr.aerwyn81.oreregen.events.OnPlayerBreakBlockEvent;
 import fr.aerwyn81.oreregen.events.OnPlayerInteractEvent;
-import fr.aerwyn81.oreregen.handlers.ConfigHandler;
-import fr.aerwyn81.oreregen.handlers.ItemHandler;
-import fr.aerwyn81.oreregen.handlers.LanguageHandler;
-import fr.aerwyn81.oreregen.handlers.LocationHandler;
+import fr.aerwyn81.oreregen.handlers.ConfigService;
+import fr.aerwyn81.oreregen.handlers.ItemService;
+import fr.aerwyn81.oreregen.handlers.LanguageService;
+import fr.aerwyn81.oreregen.handlers.LocationService;
 import fr.aerwyn81.oreregen.runnables.OreRegenCheckTask;
 import fr.aerwyn81.oreregen.utils.ConfigUpdater;
 import fr.aerwyn81.oreregen.utils.FormatUtils;
@@ -23,12 +23,11 @@ public final class OreRegen extends JavaPlugin {
     public static ConsoleCommandSender log;
     private static OreRegen instance;
 
-    private ConfigHandler configHandler;
-    private LanguageHandler languageHandler;
-    private ItemHandler itemHandler;
-    private LocationHandler locationHandler;
-
     private OreRegenCheckTask oreRegenCheckTask;
+
+    public static OreRegen getInstance() {
+        return instance;
+    }
 
     @Override
     public void onEnable() {
@@ -47,25 +46,23 @@ public final class OreRegen extends JavaPlugin {
         }
         reloadConfig();
 
-        this.configHandler = new ConfigHandler(configFile);
-        this.configHandler.loadConfiguration();
+        ConfigService.initialize(configFile);
 
-        this.languageHandler = new LanguageHandler(this, configHandler.getLanguage());
-        this.languageHandler.pushMessages();
+        LanguageService.initialize(ConfigService.getLanguage());
+        LanguageService.pushMessages();
 
-        this.itemHandler = new ItemHandler(this);
-        this.itemHandler.loadItem();
+        ItemService.loadItem();
 
-        this.locationHandler = new LocationHandler(this);
-        this.locationHandler.loadLocations();
+        LocationService.initialize();
+        LocationService.loadLocations();
 
-        this.oreRegenCheckTask = new OreRegenCheckTask(this);
-        oreRegenCheckTask.runTaskTimer(this, 0, (configHandler.getTimerDelay() == 0 ? 1 : configHandler.getTimerDelay()) * 20L);
+        this.oreRegenCheckTask = new OreRegenCheckTask();
+        oreRegenCheckTask.runTaskTimer(this, 0, (ConfigService.getTimerDelay() == 0 ? 1 : ConfigService.getTimerDelay()) * 20L);
 
         getCommand("oreregen").setExecutor(new ORCommandExecutor(this));
 
-        Bukkit.getPluginManager().registerEvents(new OnPlayerInteractEvent(this), this);
-        Bukkit.getPluginManager().registerEvents(new OnPlayerBreakBlockEvent(this), this);
+        Bukkit.getPluginManager().registerEvents(new OnPlayerInteractEvent(), this);
+        Bukkit.getPluginManager().registerEvents(new OnPlayerBreakBlockEvent(), this);
 
         log.sendMessage(FormatUtils.translate("&6OreRegen &asuccessfully loaded!"));
     }
@@ -74,25 +71,9 @@ public final class OreRegen extends JavaPlugin {
     public void onDisable() {
         Bukkit.getScheduler().cancelTasks(this);
 
-        getLocationHandler().getBlocks().forEach(RegenBlock::resetMinedBlock);
+        LocationService.getBlocks().forEach(RegenBlock::resetMinedBlock);
 
         log.sendMessage(FormatUtils.translate("&6OreRegen &cdisabled!"));
-    }
-
-    public ConfigHandler getConfigHandler() {
-        return configHandler;
-    }
-
-    public LanguageHandler getLanguageHandler() {
-        return languageHandler;
-    }
-
-    public ItemHandler getItemHandler() {
-        return itemHandler;
-    }
-
-    public LocationHandler getLocationHandler() {
-        return locationHandler;
     }
 
     public OreRegenCheckTask getOreRegenCheckTask() {

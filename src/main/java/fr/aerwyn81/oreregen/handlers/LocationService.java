@@ -18,27 +18,19 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Level;
 
-public class LocationHandler {
-    private final File configFile;
-    private FileConfiguration config;
+public class LocationService {
+    private static File configFile;
+    private static FileConfiguration config;
 
-    private ArrayList<RegenBlock> blocks;
+    private static ArrayList<RegenBlock> blocks;
 
-    public LocationHandler(OreRegen main) {
-        this.blocks = new ArrayList<>();
-
-        configFile = new File(main.getDataFolder(), "locations.yml");
+    public static void initialize() {
+        configFile = new File(OreRegen.getInstance().getDataFolder(), "locations.yml");
     }
 
-    public static boolean areEquals(Location loc1, Location loc2) {
-        return loc1 != null && loc2 != null && loc1.getBlockX() == loc2.getBlockX()
-                && loc1.getBlockY() == loc2.getBlockY()
-                && loc1.getBlockZ() == loc2.getBlockZ()
-                && loc1.getWorld() != null && loc2.getWorld() != null &&
-                loc1.getWorld().getName().equals(loc2.getWorld().getName());
-    }
+    public static void loadLocations() {
+        blocks = new ArrayList<>();
 
-    public void loadLocations() {
         config = YamlConfiguration.loadConfiguration(configFile);
 
         ConfigurationSection locs = config.getConfigurationSection("blocks");
@@ -64,7 +56,7 @@ public class LocationHandler {
         });
     }
 
-    public void addBlock(Block block) {
+    public static void addBlock(Block block) {
         UUID uniqueUuid = UUID.randomUUID();
         while (getBlockByUUID(uniqueUuid) != null) {
             uniqueUuid = UUID.randomUUID();
@@ -74,13 +66,13 @@ public class LocationHandler {
         saveLocations();
     }
 
-    public void removeBlock(RegenBlock block) {
+    public static void removeBlock(RegenBlock block) {
         blocks.remove(block);
         saveLocations();
         saveConfig();
     }
 
-    public void saveLocations() {
+    public static void saveLocations() {
         config.set("blocks", new ArrayList<>());
 
         blocks.forEach(key -> {
@@ -91,7 +83,7 @@ public class LocationHandler {
         saveConfig();
     }
 
-    private void saveConfig() {
+    private static void saveConfig() {
         try {
             config.save(configFile);
         } catch (IOException e) {
@@ -99,15 +91,23 @@ public class LocationHandler {
         }
     }
 
-    public RegenBlock getBlockByUUID(UUID blockUuid) {
+    public static RegenBlock getBlockByUUID(UUID blockUuid) {
         return blocks.stream().filter(rB -> rB.getIdentifier().equals(blockUuid)).findFirst().orElse(null);
     }
 
-    public RegenBlock getBlockByLocation(Location loc) {
+    public static RegenBlock getBlockByLocation(Location loc) {
         return blocks.stream().filter(rB -> areEquals(rB.getLocation(), loc)).findFirst().orElse(null);
     }
 
-    public ArrayList<RegenBlock> getBlocks() {
+    public static ArrayList<RegenBlock> getBlocks() {
         return blocks;
+    }
+
+    private static boolean areEquals(Location loc1, Location loc2) {
+        return loc1 != null && loc2 != null && loc1.getBlockX() == loc2.getBlockX()
+                && loc1.getBlockY() == loc2.getBlockY()
+                && loc1.getBlockZ() == loc2.getBlockZ()
+                && loc1.getWorld() != null && loc2.getWorld() != null &&
+                loc1.getWorld().getName().equals(loc2.getWorld().getName());
     }
 }

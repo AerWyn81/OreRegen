@@ -2,8 +2,9 @@ package fr.aerwyn81.oreregen.events;
 
 import fr.aerwyn81.oreregen.OreRegen;
 import fr.aerwyn81.oreregen.data.RegenBlock;
-import fr.aerwyn81.oreregen.handlers.LanguageHandler;
-import fr.aerwyn81.oreregen.handlers.LocationHandler;
+import fr.aerwyn81.oreregen.handlers.ConfigService;
+import fr.aerwyn81.oreregen.handlers.LanguageService;
+import fr.aerwyn81.oreregen.handlers.LocationService;
 import fr.aerwyn81.oreregen.utils.FormatUtils;
 import fr.aerwyn81.oreregen.utils.MillisecondConverter;
 import fr.aerwyn81.oreregen.utils.PlayerUtils;
@@ -24,15 +25,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class OnPlayerBreakBlockEvent implements Listener {
-    private final OreRegen main;
-    private final LanguageHandler languageHandler;
-    private final LocationHandler locationHandler;
-
-    public OnPlayerBreakBlockEvent(OreRegen main) {
-        this.main = main;
-        this.languageHandler = main.getLanguageHandler();
-        this.locationHandler = main.getLocationHandler();
-    }
 
     @EventHandler
     public void onPlayerBreakBlock(BlockBreakEvent e) {
@@ -41,12 +33,12 @@ public class OnPlayerBreakBlockEvent implements Listener {
         Block block = e.getBlock();
         Location blockLocation = block.getLocation();
 
-        RegenBlock regenBlock = locationHandler.getBlockByLocation(blockLocation);
+        RegenBlock regenBlock = LocationService.getBlockByLocation(blockLocation);
         if (regenBlock == null)
             return;
 
         if (!PlayerUtils.hasPermission(player, "oreregen.use")) {
-            String message = languageHandler.getMessage("Messages.NoPermission");
+            String message = LanguageService.getMessage("Messages.NoPermission");
 
             if (!message.trim().isEmpty()) {
                 player.sendMessage(message);
@@ -59,12 +51,12 @@ public class OnPlayerBreakBlockEvent implements Listener {
         if (player.getGameMode() == GameMode.CREATIVE && player.getInventory().getItemInMainHand().getType() == Material.AIR) {
             if (!player.isSneaking()) {
                 e.setCancelled(true);
-                player.sendMessage(languageHandler.getMessage("Messages.CreativeSneakRemoveBlock"));
+                player.sendMessage(LanguageService.getMessage("Messages.CreativeSneakRemoveBlock"));
                 return;
             }
 
-            locationHandler.removeBlock(regenBlock);
-            player.sendMessage(languageHandler.getMessage("Messages.BlockDeleted")
+            LocationService.removeBlock(regenBlock);
+            player.sendMessage(LanguageService.getMessage("Messages.BlockDeleted")
                     .replaceAll("%x%", String.valueOf(blockLocation.getBlockX()))
                     .replaceAll("%y%", String.valueOf(blockLocation.getBlockY()))
                     .replaceAll("%z%", String.valueOf(blockLocation.getBlockZ()))
@@ -74,7 +66,7 @@ public class OnPlayerBreakBlockEvent implements Listener {
         }
 
         if (regenBlock.isMined()) {
-            String message = languageHandler.getMessage("Messages.BlockAlreadyBreaked");
+            String message = LanguageService.getMessage("Messages.BlockAlreadyBreaked");
             if (!message.trim().isEmpty()) {
                 MillisecondConverter converter = new MillisecondConverter(regenBlock.getNextResetTime() - System.currentTimeMillis());
                 player.sendMessage(message.replaceAll("%h%", String.valueOf(converter.getHours()))
@@ -109,24 +101,24 @@ public class OnPlayerBreakBlockEvent implements Listener {
             player.updateInventory();
         }
 
-        String message = languageHandler.getMessage("Messages.BlockBreaked");
+        String message = LanguageService.getMessage("Messages.BlockBreaked");
         if (!message.trim().isEmpty()) {
             player.sendMessage(message);
         }
 
-        Bukkit.getScheduler().runTaskLater(main, () -> {
-            main.getConfigHandler().getRewardCommands().forEach(command ->
-                    main.getServer().dispatchCommand(main.getServer().getConsoleSender(), command
-                            .replace("%player%", player.getName())));
-        }, 1L);
+        OreRegen plugin = OreRegen.getInstance();
+
+        Bukkit.getScheduler().runTaskLater(plugin, () -> ConfigService.getRewardCommands().forEach(command ->
+                plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), command
+                        .replace("%player%", player.getName()))), 1L);
     }
 
     private void internalMinedBlock(RegenBlock regenBlock, Block block) {
-        long time = getRandomTimeInRange(main.getConfigHandler().getTimerRangeMin(), main.getConfigHandler().getTimerRangeMax());
+        long time = getRandomTimeInRange(ConfigService.getTimerRangeMin(), ConfigService.getTimerRangeMax());
         regenBlock.setMined(time);
 
         try {
-            block.setType(Material.valueOf(main.getConfigHandler().getReplacingBlock()));
+            block.setType(Material.valueOf(ConfigService.getReplacingBlock()));
         } catch (Exception ex) {
             block.setType(Material.BEDROCK);
             OreRegen.log.sendMessage(FormatUtils.translate("&cError while replacing block: " + ex.getMessage()));
