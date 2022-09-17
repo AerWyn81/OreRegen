@@ -5,6 +5,7 @@ import fr.aerwyn81.oreregen.data.RegenBlock;
 import fr.aerwyn81.oreregen.events.OnPlayerBreakBlockEvent;
 import fr.aerwyn81.oreregen.events.OnPlayerHelEvent;
 import fr.aerwyn81.oreregen.events.OnPlayerInteractEvent;
+import fr.aerwyn81.oreregen.events.OnWorldLoadEvent;
 import fr.aerwyn81.oreregen.handlers.BlockRegenService;
 import fr.aerwyn81.oreregen.handlers.ConfigService;
 import fr.aerwyn81.oreregen.handlers.ItemService;
@@ -65,6 +66,7 @@ public final class OreRegen extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new OnPlayerInteractEvent(), this);
         Bukkit.getPluginManager().registerEvents(new OnPlayerBreakBlockEvent(), this);
         Bukkit.getPluginManager().registerEvents(new OnPlayerHelEvent(), this);
+        Bukkit.getPluginManager().registerEvents(new OnWorldLoadEvent(), this);
 
         log.sendMessage(FormatUtils.translate("&6OreRegen &asuccessfully loaded!"));
     }

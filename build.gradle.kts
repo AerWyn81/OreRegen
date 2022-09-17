@@ -48,7 +48,7 @@ bukkit {
     authors = listOf("AerWyn81")
     apiVersion = "1.13"
     description = "Regen defined ores and earn rewards on ore break"
-    version = version.toString()
+    version = project.version.toString()
     website = "https://just2craft.fr"
 
     commands {

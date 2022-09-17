@@ -2,20 +2,25 @@ package fr.aerwyn81.oreregen.data;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
+import org.bukkit.util.Vector;
 
 import java.util.UUID;
 
 public class RegenBlock {
     private final UUID identifier;
-    private final Location location;
+    private final Vector vector;
+    private final String worldName;
     private final Material material;
 
+    private Location location;
     private boolean mined;
     private long nextResetTime;
 
-    public RegenBlock(UUID identifier, Location location, Material material) {
+    public RegenBlock(UUID identifier, Vector vector, String worldName, Material material) {
         this.identifier = identifier;
-        this.location = location;
+        this.vector = vector;
+        this.worldName = worldName;
         this.material = material;
     }
 
@@ -23,12 +28,16 @@ public class RegenBlock {
         return identifier;
     }
 
-    public Location getLocation() {
-        return location;
-    }
-
     public Material getMaterial() {
         return material;
+    }
+
+    public Vector getVector() {
+        return vector;
+    }
+
+    public String getWorldName() {
+        return worldName;
     }
 
     public boolean isMined() {
@@ -43,6 +52,14 @@ public class RegenBlock {
     public void resetMinedBlock() {
         mined = false;
         location.getBlock().setType(material);
+    }
+
+    public Location getLocation() {
+        return location;
+    }
+
+    public void setLocation(World world) {
+        location = new Location(world, vector.getBlockX(), vector.getBlockY(), vector.getBlockZ());
     }
 
     public boolean canBeReset() {

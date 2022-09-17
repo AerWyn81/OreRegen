@@ -101,11 +101,6 @@ public class OnPlayerBreakBlockEvent implements Listener {
             player.updateInventory();
         }
 
-        String message = LanguageService.getMessage("Messages.BlockBreaked");
-        if (!message.trim().isEmpty()) {
-            player.sendMessage(message);
-        }
-
         OreRegen plugin = OreRegen.getInstance();
 
         Bukkit.getScheduler().runTaskLater(plugin, () -> ConfigService.getRewardCommands().forEach(command ->

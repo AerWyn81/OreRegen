@@ -57,13 +57,20 @@ public class BlockRegenService {
 
         locs.getKeys(false).forEach(uuid -> {
             ConfigurationSection locationSection = config.getConfigurationSection("blocks." + uuid + ".location");
+            String worldName = config.getString("blocks." + uuid + ".world", "");
             String blockType = config.getString("blocks." + uuid + ".blockType", "");
 
             if (locationSection != null && !blockType.isEmpty()) {
                 Map<String, Object> serializedLoc = locationSection.getValues(false);
 
                 try {
-                    blocks.add(new RegenBlock(UUID.fromString(uuid), Location.deserialize(serializedLoc), Material.valueOf(blockType)));
+                    RegenBlock newRegenBlock = new RegenBlock(UUID.fromString(uuid), Vector.deserialize(serializedLoc), worldName, Material.valueOf(blockType));
+                    World world = Bukkit.getWorld(worldName);
+                    if (world != null) {
+                        newRegenBlock.setLocation(world);
+                    }
+
+                    blocks.add(newRegenBlock);
                 } catch (Exception e) {
                     OreRegen.log.sendMessage(FormatUtils.translate("&cCannot deserialize configuration of block " + uuid + ": " + e.getMessage()));
                 }
@@ -77,7 +84,10 @@ public class BlockRegenService {
             uniqueUuid = UUID.randomUUID();
         }
 
-        blocks.add(new RegenBlock(uniqueUuid, block.getLocation(), block.getType()));
+        RegenBlock regenBlock = new RegenBlock(uniqueUuid, block.getLocation().toVector(), block.getWorld().getName(), block.getType());
+        regenBlock.setLocation(block.getWorld());
+        blocks.add(regenBlock);
+
         saveLocations();
     }
 
@@ -93,7 +103,8 @@ public class BlockRegenService {
         blocks.forEach(key -> {
             String item = "blocks." + key.getIdentifier().toString();
             config.set(item + ".blockType", key.getMaterial().name());
-            config.set(item + ".location", key.getLocation().serialize());
+            config.set(item + ".world", key.getWorldName());
+            config.set(item + ".location", key.getVector().serialize());
         });
         saveConfig();
     }
@@ -111,7 +122,7 @@ public class BlockRegenService {
     }
 
     public static RegenBlock getBlockByLocation(Location loc) {
-        return blocks.stream().filter(rB -> areEquals(rB.getLocation(), loc)).findFirst().orElse(null);
+        return blocks.stream().filter(rB -> areEquals(loc, rB.getLocation())).findFirst().orElse(null);
     }
 
     public static ArrayList<RegenBlock> getBlocks() {
