@@ -67,7 +67,7 @@ public class BlockRegenService {
                     RegenBlock newRegenBlock = new RegenBlock(UUID.fromString(uuid), Vector.deserialize(serializedLoc), worldName, Material.valueOf(blockType));
                     World world = Bukkit.getWorld(worldName);
                     if (world != null) {
-                        newRegenBlock.setLocation(world);
+                        newRegenBlock.setBlock(world);
                     }
 
                     blocks.add(newRegenBlock);
@@ -85,7 +85,7 @@ public class BlockRegenService {
         }
 
         RegenBlock regenBlock = new RegenBlock(uniqueUuid, block.getLocation().toVector(), block.getWorld().getName(), block.getType());
-        regenBlock.setLocation(block.getWorld());
+        regenBlock.setBlock(block.getWorld());
         blocks.add(regenBlock);
 
         saveLocations();
@@ -122,7 +122,7 @@ public class BlockRegenService {
     }
 
     public static RegenBlock getBlockByLocation(Location loc) {
-        return blocks.stream().filter(rB -> areEquals(loc, rB.getLocation())).findFirst().orElse(null);
+        return blocks.stream().filter(rB -> areEquals(loc, rB.getBlock().getLocation())).findFirst().orElse(null);
     }
 
     public static ArrayList<RegenBlock> getBlocks() {
@@ -143,10 +143,10 @@ public class BlockRegenService {
                 particlesCache.put(player.getUniqueId(), new ArrayList<>());
             }
 
-            for (RegenBlock block : blocks) {
-                Location locMax = block.getLocation().clone().add(1, 1, 1);
+            for (RegenBlock rBlock : blocks) {
+                Location locMax = rBlock.getBlock().getLocation().clone().add(1, 1, 1);
 
-                Integer pTask = startCubeTask(block.getLocation().getWorld(), block.getLocation().toVector(), locMax.toVector(), player);
+                Integer pTask = startCubeTask(rBlock.getBlock().getLocation().getWorld(), rBlock.getBlock().getLocation().toVector(), locMax.toVector(), player);
                 particlesCache.get(player.getUniqueId()).add(pTask);
             }
         }

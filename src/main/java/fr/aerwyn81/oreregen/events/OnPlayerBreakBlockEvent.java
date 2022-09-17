@@ -48,7 +48,7 @@ public class OnPlayerBreakBlockEvent implements Listener {
 
         e.setCancelled(true);
 
-        if (player.getGameMode() == GameMode.CREATIVE && player.getInventory().getItemInMainHand().getType() == Material.AIR) {
+        if (player.getGameMode() == GameMode.CREATIVE) {
             if (!player.isSneaking()) {
                 e.setCancelled(true);
                 player.sendMessage(LanguageService.getMessage("Messages.CreativeSneakRemoveBlock"));
