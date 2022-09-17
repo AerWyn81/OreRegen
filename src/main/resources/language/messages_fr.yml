@@ -13,6 +13,7 @@ Messages:
   BlockBreaked: "%prefix% &aBloc miné avec succès"
   BlockAlreadyBreaked: "%prefix% &cCe bloc a déjà été miné, veuillez attendre %s% seconde(s)"
   Version: "%prefix% &aVersion du plugin : &e%version%"
+  InventoryFull: "%prefix% &cIl n'y a pas assez de place dans votre inventaire"
 
 Chat:
   Hover:
