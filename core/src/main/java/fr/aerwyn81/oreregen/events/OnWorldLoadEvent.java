@@ -16,7 +16,7 @@ public class OnWorldLoadEvent implements Listener {
                 .stream()
                 .filter(b -> b.getWorldName().equals(e.getWorld().getName()))
                 .collect(Collectors.toList())) {
-            block.setBlock(e.getWorld());
+            block.registerBlock(e.getWorld());
         }
     }
 }

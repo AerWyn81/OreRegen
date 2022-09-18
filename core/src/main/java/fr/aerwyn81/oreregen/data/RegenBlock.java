@@ -1,10 +1,11 @@
 package fr.aerwyn81.oreregen.data;
 
+import fr.aerwyn81.oreregen.OreRegen;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
-import org.bukkit.material.Directional;
+import org.bukkit.block.BlockFace;
 import org.bukkit.util.Vector;
 
 import java.util.UUID;
@@ -16,6 +17,7 @@ public class RegenBlock {
     private final Material material;
 
     private Block block;
+    private BlockFace blockFacing;
     private boolean mined;
     private long nextResetTime;
 
@@ -53,19 +55,18 @@ public class RegenBlock {
 
     public void resetMinedBlock() {
         mined = false;
+
         block.setType(material);
+        OreRegen.getInstance().getBlockCompatibility().setBlockFace(block, blockFacing);
     }
 
     public Block getBlock() {
         return block;
     }
 
-    public void setBlock(World world) {
+    public void registerBlock(World world) {
         block = new Location(world, vector.getBlockX(), vector.getBlockY(), vector.getBlockZ()).getBlock();
-
-        if (block.getBlockData() instanceof Directional) {
-            Directional b = (Directional) block;
-        }
+        blockFacing = OreRegen.getInstance().getBlockCompatibility().getBlockFace(block);
     }
 
     public boolean canBeReset() {

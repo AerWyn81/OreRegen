@@ -67,7 +67,7 @@ public class BlockRegenService {
                     RegenBlock newRegenBlock = new RegenBlock(UUID.fromString(uuid), Vector.deserialize(serializedLoc), worldName, Material.valueOf(blockType));
                     World world = Bukkit.getWorld(worldName);
                     if (world != null) {
-                        newRegenBlock.setBlock(world);
+                        newRegenBlock.registerBlock(world);
                     }
 
                     blocks.add(newRegenBlock);
@@ -85,7 +85,7 @@ public class BlockRegenService {
         }
 
         RegenBlock regenBlock = new RegenBlock(uniqueUuid, block.getLocation().toVector(), block.getWorld().getName(), block.getType());
-        regenBlock.setBlock(block.getWorld());
+        regenBlock.registerBlock(block.getWorld());
         blocks.add(regenBlock);
 
         saveLocations();

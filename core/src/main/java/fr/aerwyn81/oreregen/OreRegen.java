@@ -1,5 +1,6 @@
 package fr.aerwyn81.oreregen;
 
+import fr.aerwyn81.interfaces.IBlockCompatibility;
 import fr.aerwyn81.oreregen.commands.ORCommandExecutor;
 import fr.aerwyn81.oreregen.data.RegenBlock;
 import fr.aerwyn81.oreregen.events.OnPlayerBreakBlockEvent;
@@ -13,6 +14,9 @@ import fr.aerwyn81.oreregen.handlers.LanguageService;
 import fr.aerwyn81.oreregen.runnables.OreRegenCheckTask;
 import fr.aerwyn81.oreregen.utils.ConfigUpdater;
 import fr.aerwyn81.oreregen.utils.FormatUtils;
+import fr.aerwyn81.oreregen.utils.Version;
+import fr.aerwyn81.v1_16_r3.V1_16_R3;
+import fr.aerwyn81.v1_17_r1.V1_17_R1;
 import org.bukkit.Bukkit;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -26,6 +30,8 @@ public final class OreRegen extends JavaPlugin {
     private static OreRegen instance;
 
     private OreRegenCheckTask oreRegenCheckTask;
+
+    private IBlockCompatibility blockCompatibility;
 
     public static OreRegen getInstance() {
         return instance;
@@ -68,7 +74,22 @@ public final class OreRegen extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new OnPlayerHelEvent(), this);
         Bukkit.getPluginManager().registerEvents(new OnWorldLoadEvent(), this);
 
+        setupVersionCompatibility();
+
         log.sendMessage(FormatUtils.translate("&6OreRegen &asuccessfully loaded!"));
+    }
+
+    private void setupVersionCompatibility() {
+        switch (Version.getCurrent()) {
+            case v1_17:
+            case v1_18:
+            case v1_19:
+                blockCompatibility = new V1_17_R1();
+                break;
+            default:
+                blockCompatibility = new V1_16_R3();
+                break;
+        }
     }
 
     @Override
@@ -86,5 +107,9 @@ public final class OreRegen extends JavaPlugin {
 
     public void setOreRegenCheckTask(OreRegenCheckTask oreRegenCheckTask) {
         this.oreRegenCheckTask = oreRegenCheckTask;
+    }
+
+    public IBlockCompatibility getBlockCompatibility() {
+        return blockCompatibility;
     }
 }
