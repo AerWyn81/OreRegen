@@ -46,8 +46,6 @@ public class OnPlayerBreakBlockEvent implements Listener {
             return;
         }
 
-        e.setCancelled(true);
-
         if (player.getGameMode() == GameMode.CREATIVE) {
             if (!player.isSneaking()) {
                 e.setCancelled(true);
@@ -66,6 +64,7 @@ public class OnPlayerBreakBlockEvent implements Listener {
         }
 
         if (regenBlock.isMined()) {
+            e.setCancelled(true);
             String message = LanguageService.getMessage("Messages.BlockAlreadyBreaked");
             if (!message.trim().isEmpty()) {
                 MillisecondConverter converter = new MillisecondConverter(regenBlock.getNextResetTime() - System.currentTimeMillis());
@@ -78,30 +77,32 @@ public class OnPlayerBreakBlockEvent implements Listener {
             return;
         }
 
-        internalMinedBlock(regenBlock, block);
-
-        ItemStack item = player.getInventory().getItemInMainHand();
-        if (item.getType().toString().toLowerCase().contains("pickaxe") && player.getGameMode() == GameMode.SURVIVAL) {
-            Damageable itemDurability = (Damageable) item.getItemMeta();
-            if (itemDurability != null) {
-                if (item.containsEnchantment(Enchantment.DURABILITY)) {
-                    int duraLevel = item.getEnchantmentLevel(Enchantment.DURABILITY);
-                    boolean shouldDamage = ((Math.random()) < (1.0 / (duraLevel + 1)));
-
-                    if (shouldDamage) {
-                        itemDurability.setDamage(itemDurability.getDamage() + 1);
-                        item.setItemMeta((ItemMeta) itemDurability);
-                    }
-                } else {
-                    itemDurability.setDamage(itemDurability.getDamage() + 1);
-                    item.setItemMeta((ItemMeta) itemDurability);
-                }
-            }
-
-            player.updateInventory();
-        }
+        e.setDropItems(false);
 
         OreRegen plugin = OreRegen.getInstance();
+
+        Bukkit.getScheduler().runTaskLater(plugin, () -> internalMinedBlock(regenBlock, block), 1L);
+
+        //ItemStack item = player.getInventory().getItemInMainHand();
+        //if (item.getType().toString().toLowerCase().contains("pickaxe") && player.getGameMode() == GameMode.SURVIVAL) {
+        //    Damageable itemDurability = (Damageable) item.getItemMeta();
+        //    if (itemDurability != null) {
+        //        if (item.containsEnchantment(Enchantment.DURABILITY)) {
+        //            int duraLevel = item.getEnchantmentLevel(Enchantment.DURABILITY);
+        //            boolean shouldDamage = ((Math.random()) < (1.0 / (duraLevel + 1)));
+
+        //            if (shouldDamage) {
+        //                itemDurability.setDamage(itemDurability.getDamage() + 1);
+        //                item.setItemMeta((ItemMeta) itemDurability);
+        //            }
+        //        } else {
+        //            itemDurability.setDamage(itemDurability.getDamage() + 1);
+        //            item.setItemMeta((ItemMeta) itemDurability);
+        //        }
+        //    }
+
+        //    player.updateInventory();
+        //}
 
         Bukkit.getScheduler().runTaskLater(plugin, () -> ConfigService.getRewardCommands().forEach(command ->
                 plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), command
