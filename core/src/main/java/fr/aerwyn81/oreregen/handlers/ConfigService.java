@@ -58,4 +58,12 @@ public class ConfigService {
     public static ArrayList<String> getRewardCommands() {
         return new ArrayList<>(config.getStringList("rewardCommands"));
     }
+
+    public static boolean isBreakChanceEnable() {
+        return config.getBoolean("breakChance.enable", false);
+    }
+
+    public static int getBreakChance() {
+        return config.getInt("breakChance.chance", 50);
+    }
 }

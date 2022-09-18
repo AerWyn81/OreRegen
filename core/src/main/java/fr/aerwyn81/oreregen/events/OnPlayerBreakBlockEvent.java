@@ -22,6 +22,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class OnPlayerBreakBlockEvent implements Listener {
@@ -104,9 +105,39 @@ public class OnPlayerBreakBlockEvent implements Listener {
         //    player.updateInventory();
         //}
 
+        if (ConfigService.isBreakChanceEnable() && isUnlucky()) {
+            String message = LanguageService.getMessage("Messages.RewardUnlucky");
+
+            if (message.length() > 0) {
+                player.sendMessage(message);
+            }
+
+            return;
+        }
+
+        String message = LanguageService.getMessage("Messages.BlockMined");
+        if (message.length() > 0) {
+            player.sendMessage(message);
+        }
+
         Bukkit.getScheduler().runTaskLater(plugin, () -> ConfigService.getRewardCommands().forEach(command ->
                 plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), command
                         .replace("%player%", player.getName()))), 1L);
+    }
+
+    private boolean isUnlucky() {
+        int chance = ConfigService.getBreakChance();
+
+        if (chance <= 0) {
+            return true;
+        }
+
+        if (chance >= 100) {
+            return false;
+        }
+
+        int rChance = new Random().nextInt(100);
+        return rChance <= chance;
     }
 
     private void internalMinedBlock(RegenBlock regenBlock, Block block) {

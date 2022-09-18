@@ -18,6 +18,14 @@ timer:
       min: 1
       max: 5
 
+# Chance to get rewards
+# 0 -> 0% of chance to get rewards
+# 100 -> 100% of chance to get rewards
+# Smaller the number, smaller the chance of getting a reward
+breakChance:
+  enable: false
+  chance: 50
+
 replacingBlock:
   type: STONE
 
