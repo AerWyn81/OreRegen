@@ -44,6 +44,8 @@ public final class OreRegen extends JavaPlugin {
 
         log.sendMessage(FormatUtils.translate("&6OreRegen &einitializing..."));
 
+        setupVersionCompatibility();
+
         File configFile = new File(getDataFolder(), "config.yml");
 
         saveDefaultConfig();
@@ -74,8 +76,6 @@ public final class OreRegen extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new OnPlayerHelEvent(), this);
         Bukkit.getPluginManager().registerEvents(new OnWorldLoadEvent(), this);
 
-        setupVersionCompatibility();
-
         log.sendMessage(FormatUtils.translate("&6OreRegen &asuccessfully loaded!"));
     }
 
@@ -85,9 +85,11 @@ public final class OreRegen extends JavaPlugin {
             case v1_18:
             case v1_19:
                 blockCompatibility = new V1_17_R1();
+                log.sendMessage(FormatUtils.translate("Detected version " + Version.getCurrentFormatted() + "! Setting up block compatibility V1_17_R1 and above"));
                 break;
             default:
                 blockCompatibility = new V1_16_R3();
+                log.sendMessage(FormatUtils.translate("Detected version " + Version.getCurrentFormatted() + "! Setting up block compatibility V1_16_R3 and beyond"));
                 break;
         }
     }
