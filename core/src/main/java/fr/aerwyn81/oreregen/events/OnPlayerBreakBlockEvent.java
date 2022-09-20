@@ -13,14 +13,10 @@ import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.Damageable;
-import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
@@ -48,8 +44,9 @@ public class OnPlayerBreakBlockEvent implements Listener {
         }
 
         if (player.getGameMode() == GameMode.CREATIVE) {
+            e.setCancelled(true);
+
             if (!player.isSneaking()) {
-                e.setCancelled(true);
                 player.sendMessage(LanguageService.getMessage("Messages.CreativeSneakRemoveBlock"));
                 return;
             }

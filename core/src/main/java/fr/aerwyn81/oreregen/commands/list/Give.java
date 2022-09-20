@@ -1,8 +1,8 @@
 package fr.aerwyn81.oreregen.commands.list;
 
+import fr.aerwyn81.oreregen.OreRegen;
 import fr.aerwyn81.oreregen.commands.Cmd;
 import fr.aerwyn81.oreregen.commands.ORAnnotations;
-import fr.aerwyn81.oreregen.handlers.ItemService;
 import fr.aerwyn81.oreregen.handlers.LanguageService;
 import fr.aerwyn81.oreregen.utils.PlayerUtils;
 import org.bukkit.Bukkit;
@@ -24,7 +24,7 @@ public class Give implements Cmd {
             return true;
         }
 
-        player.getInventory().addItem(ItemService.getItem());
+        player.getInventory().addItem(OreRegen.getPluginItem());
         player.sendMessage(LanguageService.getMessage("Messages.ItemGived"));
 
         return true;

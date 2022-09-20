@@ -1,8 +1,8 @@
 package fr.aerwyn81.oreregen.events;
 
+import fr.aerwyn81.oreregen.OreRegen;
 import fr.aerwyn81.oreregen.data.RegenBlock;
 import fr.aerwyn81.oreregen.handlers.BlockRegenService;
-import fr.aerwyn81.oreregen.handlers.ItemService;
 import fr.aerwyn81.oreregen.handlers.LanguageService;
 import fr.aerwyn81.oreregen.utils.PlayerUtils;
 import fr.aerwyn81.oreregen.utils.Version;
@@ -69,6 +69,6 @@ public class OnPlayerInteractEvent implements Listener {
     }
 
     private boolean hasPluginItemInHand(Player player) {
-        return player.getInventory().getItemInMainHand().isSimilar(ItemService.getItem());
+        return player.getInventory().getItemInMainHand().isSimilar(OreRegen.getPluginItem());
     }
 }

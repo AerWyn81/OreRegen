@@ -20,7 +20,7 @@ public class LanguageService {
 	private static HashMap<String, Object> messages;
 
 	public static void initialize(String lang) {
-		new File(OreRegen.getInstance() + "/language").mkdirs();
+		new File(OreRegen.getInstance().getDataFolder() + "/language").mkdirs();
 
 		loadLanguage("fr");
 		language = checkLanguage(lang);

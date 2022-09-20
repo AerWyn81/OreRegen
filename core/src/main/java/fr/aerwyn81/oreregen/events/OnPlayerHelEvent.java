@@ -1,7 +1,7 @@
 package fr.aerwyn81.oreregen.events;
 
+import fr.aerwyn81.oreregen.OreRegen;
 import fr.aerwyn81.oreregen.handlers.BlockRegenService;
-import fr.aerwyn81.oreregen.handlers.ItemService;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -16,7 +16,7 @@ public class OnPlayerHelEvent implements Listener {
 
         ItemStack itemSelected = player.getInventory().getContents()[e.getNewSlot()];
 
-        if (itemSelected == null || !itemSelected.isSimilar(ItemService.getItem())) {
+        if (itemSelected == null || !itemSelected.isSimilar(OreRegen.getPluginItem())) {
             BlockRegenService.removeBlockParticlesCache(player);
             return;
         }

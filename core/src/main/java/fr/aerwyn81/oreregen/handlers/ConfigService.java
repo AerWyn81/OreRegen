@@ -23,18 +23,6 @@ public class ConfigService {
         return config.getString("language", "en").toLowerCase();
     }
 
-    public static String getItemType() {
-        return config.getString("item.type", "stick");
-    }
-
-    public static String getItemName() {
-        return config.getString("item.name", "{#eac086}&lO{#ffe39f}&lre{#eac086}&lR{#ffe39f}&legen");
-    }
-
-    public static ArrayList<String> getItemLore() {
-        return new ArrayList<>(config.getStringList("item.lore"));
-    }
-
     public static long getTimerDelay() {
         return config.getLong("timer.delay", 1);
     }

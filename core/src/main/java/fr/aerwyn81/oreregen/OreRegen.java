@@ -9,16 +9,19 @@ import fr.aerwyn81.oreregen.events.OnPlayerInteractEvent;
 import fr.aerwyn81.oreregen.events.OnWorldLoadEvent;
 import fr.aerwyn81.oreregen.handlers.BlockRegenService;
 import fr.aerwyn81.oreregen.handlers.ConfigService;
-import fr.aerwyn81.oreregen.handlers.ItemService;
 import fr.aerwyn81.oreregen.handlers.LanguageService;
 import fr.aerwyn81.oreregen.runnables.OreRegenCheckTask;
 import fr.aerwyn81.oreregen.utils.ConfigUpdater;
 import fr.aerwyn81.oreregen.utils.FormatUtils;
+import fr.aerwyn81.oreregen.utils.ItemBuilder;
 import fr.aerwyn81.oreregen.utils.Version;
 import fr.aerwyn81.v1_16_r3.V1_16_R3;
 import fr.aerwyn81.v1_17_r1.V1_17_R1;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.enchantments.Enchantment;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -33,8 +36,14 @@ public final class OreRegen extends JavaPlugin {
 
     private IBlockCompatibility blockCompatibility;
 
+    private static ItemBuilder item;
+
     public static OreRegen getInstance() {
         return instance;
+    }
+
+    public static ItemStack getPluginItem() {
+        return item.getItemStack();
     }
 
     @Override
@@ -61,13 +70,12 @@ public final class OreRegen extends JavaPlugin {
         LanguageService.initialize(ConfigService.getLanguage());
         LanguageService.pushMessages();
 
-        ItemService.loadItem();
-
         BlockRegenService.initialize();
         BlockRegenService.loadBlocks();
 
-        this.oreRegenCheckTask = new OreRegenCheckTask();
-        oreRegenCheckTask.runTaskTimer(this, 0, (ConfigService.getTimerDelay() == 0 ? 1 : ConfigService.getTimerDelay()) * 20L);
+        createItem();
+
+        startGlobalTask();
 
         getCommand("oreregen").setExecutor(new ORCommandExecutor(this));
 
@@ -94,6 +102,13 @@ public final class OreRegen extends JavaPlugin {
         }
     }
 
+    private void createItem() {
+        item = new ItemBuilder(Material.STICK)
+                .name(FormatUtils.translate("{#eac086}&lO{#ffe39f}&lre{#eac086}&lR{#ffe39f}&legen"))
+                .lore("")
+                .addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 1, true);
+    }
+
     @Override
     public void onDisable() {
         Bukkit.getScheduler().cancelTasks(this);
@@ -113,5 +128,10 @@ public final class OreRegen extends JavaPlugin {
 
     public IBlockCompatibility getBlockCompatibility() {
         return blockCompatibility;
+    }
+
+    private void startGlobalTask() {
+        this.oreRegenCheckTask = new OreRegenCheckTask();
+        oreRegenCheckTask.runTaskTimer(this, 0, (ConfigService.getTimerDelay() == 0 ? 1 : ConfigService.getTimerDelay()) * 20L);
     }
 }

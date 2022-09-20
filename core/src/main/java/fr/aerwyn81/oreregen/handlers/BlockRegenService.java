@@ -92,6 +92,8 @@ public class BlockRegenService {
     }
 
     public static void removeBlock(RegenBlock block) {
+        block.resetMinedBlock();
+
         blocks.remove(block);
         saveLocations();
         saveConfig();

@@ -6,7 +6,6 @@ import fr.aerwyn81.oreregen.commands.ORAnnotations;
 import fr.aerwyn81.oreregen.data.RegenBlock;
 import fr.aerwyn81.oreregen.handlers.BlockRegenService;
 import fr.aerwyn81.oreregen.handlers.ConfigService;
-import fr.aerwyn81.oreregen.handlers.ItemService;
 import fr.aerwyn81.oreregen.handlers.LanguageService;
 import fr.aerwyn81.oreregen.runnables.OreRegenCheckTask;
 import org.bukkit.Bukkit;
@@ -26,8 +25,6 @@ public class Reload implements Cmd {
 
         LanguageService.setLanguage(ConfigService.getLanguage());
         LanguageService.pushMessages();
-
-        ItemService.loadItem();
 
         BlockRegenService.getBlocks().forEach(RegenBlock::resetMinedBlock);
         BlockRegenService.loadBlocks();

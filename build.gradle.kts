@@ -6,7 +6,7 @@ allprojects {
     apply(plugin = "java")
 
     group = "fr.aerwyn81"
-    version = "1.1.1"
+    version = "1.2.0"
 
     repositories {
         mavenCentral()

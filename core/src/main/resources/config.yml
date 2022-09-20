@@ -1,15 +1,6 @@
 # Language used for messages in the plugin
 language: en
 
-item:
-  type: STICK
-  name: '{#eac086}&lO{#ffe39f}&lre{#eac086}&lR{#ffe39f}&legen'
-  lore:
-    - ''
-    - '&a+ &7Clic droit pour définir un bloc'
-    - '&c- &7Shift+clic gauche pour retirer un bloc'
-    - ''
-
 timer:
   delay: 1 # time in seconds (each second we will check if block can be replaced)
   respawn:
